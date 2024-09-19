@@ -1,8 +1,8 @@
 public class Task {
-    private String heading;
-    private String description;
-    private Status status;
-    private int id;
+    protected String heading;
+    protected String description;
+    protected Status status;
+    protected int id;
 
 
     public Task(String heading, String description, int id) {
@@ -19,19 +19,19 @@ public class Task {
         this.description = description;
     }
 
-    public String printTask(){
+
+    public String printTask() {
         return "Задача номер " + id
                 + ". Название: " + heading +
-                ". Описание: " + description;
+                ". Описание: " + description +
+                ". Статус: " + status;
     }
 
-    public int getId(){
+    public int getId() {
         return this.id;
     }
 
-
-    public Status setStatus() {
-        status = Status.NEW;
-        return status;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }
