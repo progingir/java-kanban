@@ -37,9 +37,9 @@ public class Main {
                     id = scanner.nextInt();
                     while (true) {
                         System.out.println("Выберите нужное действие:");
-                        System.out.println("1 - Редактировать название");
-                        System.out.println("2 - Редактировать описание");
-                        System.out.println("0 - Закончить редактирование");
+                        System.out.println("1 - Редактировать название.");
+                        System.out.println("2 - Редактировать описание.");
+                        System.out.println("0 - Закончить редактирование.");
                         int comm = scanner.nextInt();
 
                         manager.updateTask(id, comm);
