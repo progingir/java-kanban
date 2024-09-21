@@ -26,32 +26,60 @@ public class Main {
                     heading = scanner.nextLine();
                     System.out.println("Введите описание задачи:");
                     description = scanner.nextLine();
+                    int index = manager.getTaskIndex(heading, description);
 
-                    Task newTask = manager.createTask(heading, description);
-
-                    System.out.println("Задача успешно создана! Ее индекс: " + newTask.getId());
-                    System.out.println("Ее статус: " + newTask.status);
+                    if (index != -1) {
+                        System.out.println("Такая задача уже есть! Ее индекс: " + tasks.get(index).getId());
+                    } else {
+                        Task newTask = new Task(heading, description, index);
+                        manager.createTask(newTask).printTask();
+                        System.out.println("Задача успешно создана! Ее индекс: " + newTask.getId());
+                    }
                     break;
                 case 2:
                     System.out.println("Введите идентификатор задачи, которую хотите отредактировать: ");
                     id = scanner.nextInt();
-                    while (true) {
-                        System.out.println("Выберите нужное действие:");
-                        System.out.println("1 - Редактировать название.");
-                        System.out.println("2 - Редактировать описание.");
-                        System.out.println("0 - Закончить редактирование.");
-                        int comm = scanner.nextInt();
+                    if (manager.checkId(id)) {
+                        while (true) {
+                            System.out.println("Выберите нужное действие:");
+                            System.out.println("1 - Редактировать название");
+                            System.out.println("2 - Редактировать описание");
+                            System.out.println("0 - Закончить редактирование");
+                            int comm = scanner.nextInt();
+                            scanner.nextLine();
 
-                        manager.updateTask(id, comm);
-                        if (comm == 0) {
-                            break;
+                            if (comm == 1) {
+                                System.out.println("Введите новое название:");
+                                String newHeading = scanner.nextLine();
+                                manager.updateTask(id, comm, newHeading);
+                                System.out.println("Новое название сохранено!");
+                            } else if (comm == 2) {
+                                System.out.println("Введите новое описание:");
+                                String newDescription = scanner.nextLine();
+                                manager.updateTask(id, comm, newDescription);
+                                System.out.println("Новое описание сохранено!");
+                            } else if (comm == 0) {
+                                break;
+                            } else {
+                                System.out.println("Такой команды нет!");
+                            }
                         }
+                    } else {
+                        System.out.println("Задачи с таким id пока что нет");
                     }
                     break;
                 case 3:
                     System.out.println("Введите идентификатор задачи, которую хотите посмотреть:");
                     id = scanner.nextInt();
-                    System.out.println(manager.getTaskById(id));
+
+                    if (tasks.containsKey(id)) {
+                        System.out.println(manager.getTaskById(id));
+                    } else if (epicTasks.containsKey(id)) {
+                        System.out.println(manager.getEpicTaskById(id));
+                    } else {
+                        System.out.println(manager.getSubTaskById(id));
+                    }
+
                     break;
                 case 4:
                     System.out.println("Уверены, что хотите удалить все задачи?");
@@ -60,6 +88,8 @@ public class Main {
                     int answer = scanner.nextInt();
                     if (answer == 1) {
                         manager.removeAllTasks();
+                        manager.removeAllEpicTasks();
+                        manager.removeAllSubTasks();
                         System.out.println("Все задачи удалены!");
                     } else {
                         break;
@@ -68,11 +98,22 @@ public class Main {
                 case 5:
                     System.out.println("Введите идентификатор задачи, которую хотите удалить:");
                     id = scanner.nextInt();
-                    manager.removeTaskById(id);
-                    System.out.println("Задача успешно удалена!");
+                    if (manager.removeTaskById(id)) {
+                        System.out.println("Задача успешно удалена!");
+                    } else {
+                        System.out.println("Задачи с таким идентификатором пока что нет");
+                    }
                     break;
                 case 6:
+                    System.out.println("== Список обычных задач: ==");
                     manager.getAllTasks();
+                    System.out.println();
+                    System.out.println("== Список глобальных задач: ==");
+                    manager.getAllEpicTasks();
+                    System.out.println();
+                    System.out.println("== Список подзадач: ==");
+                    manager.getAllSubTasks();
+                    System.out.println();
                     break;
                 case 7:
                     System.out.println("Введите идентификатор эпика");
@@ -84,21 +125,29 @@ public class Main {
                     heading = scanner.nextLine();
                     System.out.println("Введите описание задачи:");
                     description = scanner.nextLine();
-                    EpicTask newEpicTask = manager.createEpicTask(heading, description);
-                    System.out.println("Глобальная задача создана! Ее индекс - " + newEpicTask.id);
+                    index = manager.getTaskIndex(heading, description);
 
+                    if (index != -1) {
+                        System.out.println("Такая глобальная задача уже есть! Ее идентификатор - " + epicTasks.get(index).getId());
+                    } else {
+                        EpicTask newTask = new EpicTask(heading, description, index);
+                        manager.createEpicTask(newTask).printTask();
+                        System.out.println("Глобальная задача успешно создана! Ее идентификатор: " + newTask.getId());
+                    }
                     break;
                 case 9:
                     System.out.println("Укажите идентификатор эпика:");
-                    id = scanner.nextInt();
+                    int epicId = scanner.nextInt();
                     scanner.nextLine();
                     System.out.println("Введите заголовок подзадачи");
                     heading = scanner.nextLine();
                     System.out.println("Введите описание подзадачи:");
                     description = scanner.nextLine();
 
-                    Subtask newSubtask = manager.createSubTask(heading, description, id);
-                    System.out.println("Подзадача успешно создана! Ее индекс - " + newSubtask.id);
+                    Subtask newSubtask = new Subtask(heading, description, 0, epicId);
+                    epicTasks.get(epicId).addSubtask(newSubtask);
+                    Subtask createdSubtask = manager.createSubTask(newSubtask);
+                    System.out.println("Подзадача успешно создана! Ее идентификатор - " + createdSubtask.id);
                     break;
                 case 10:
                     System.out.println("Введите идентификатор задачи");

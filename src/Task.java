@@ -4,11 +4,11 @@ public class Task {
     protected Status status;
     protected int id;
 
-
     public Task(String heading, String description, int id) {
         this.heading = heading;
         this.description = description;
         this.id = id;
+        this.status = Status.NEW;
     }
 
     public void setHeading(String heading) {
@@ -21,14 +21,19 @@ public class Task {
 
 
     public String printTask() {
-        return "Задача номер " + id
-                + ". Название: " + heading +
-                ". Описание: " + description +
-                ". Статус: " + status;
+        return "Обычная задача с идентификатором  " + id + "\n" +
+                "Название: " + heading + "\n" +
+                "Описание: " + description + "\n" +
+                "Статус: " + status + "\n";
     }
+
 
     public int getId() {
         return this.id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setStatus(Status status) {
