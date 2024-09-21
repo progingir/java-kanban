@@ -12,6 +12,10 @@ public class EpicTask extends Task {
         subtasks.add(subtask);
     }
 
+    public ArrayList<Subtask> getSubtasks() {
+        return subtasks;
+    }
+
     @Override
     public String printTask() {
         return "Глобальная задача с идентификатором " + id + "\n" +
@@ -20,5 +24,3 @@ public class EpicTask extends Task {
                 "Статус: " + status + "\n";
     }
 }
-
-

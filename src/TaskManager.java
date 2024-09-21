@@ -17,24 +17,20 @@ public class TaskManager {
         this.subTasks = subTasks;
     }
 
-    public void getAllTasks() {
-        for (Integer key : tasks.keySet()) {
-            System.out.println(tasks.get(key).printTask());
-        }
+    public List<Task> getAllTasks() {
+        return new ArrayList<>(tasks.values());
     }
 
-    public void getAllEpicTasks() {
-        for (Integer key : epicTasks.keySet()) {
-            System.out.println(epicTasks.get(key).printTask());
-        }
+    public ArrayList<EpicTask> getAllEpicTasks() {
+        return new ArrayList<>(epicTasks.values());
     }
 
-    public void getAllSubTasks() {
-        for (Integer key : subTasks.keySet()) {
-            for (Subtask subtask : subTasks.get(key)) {
-                System.out.println(subtask.printTask());
-            }
+    public List<Subtask> getAllSubTasks() {
+        List<Subtask> allSubtasks = new ArrayList<>();
+        for (List<Subtask> subtasksForEpic : subTasks.values()) {
+            allSubtasks.addAll(subtasksForEpic);
         }
+        return allSubtasks;
     }
 
     public void removeAllTasks() {
@@ -43,30 +39,42 @@ public class TaskManager {
     }
 
     public void removeAllEpicTasks() {
+        Set<Integer> epicIds = new HashSet<>(epicTasks.keySet());
+
+        for (Integer epicId : epicIds) {
+            subTasks.remove(epicId);
+        }
+
         epicTasks.clear();
     }
 
     public void removeAllSubTasks() {
         subTasks.clear();
+
+        for (EpicTask epic : epicTasks.values()) {
+            if (epic.getSubtasks().isEmpty()) {
+                epic.setStatus(Status.DONE);
+            }
+        }
     }
 
-    public String getTaskById(int id) {
-        return tasks.get(id).printTask();
+    public Task getTaskById(int id) {
+        return tasks.get(id);
     }
 
-    public String getEpicTaskById(int id) {
-        return epicTasks.get(id).printTask();
+    public EpicTask getEpicTaskById(int id) {
+        return epicTasks.get(id);
     }
 
-    public String getSubTaskById(int id) {
+    public Subtask getSubTaskById(int id) {
         for (List<Subtask> subtasks : subTasks.values()) {
             for (Subtask subtask : subtasks) {
                 if (subtask.getId() == id) {
-                    return subtask.printTask();
+                    return subtask;
                 }
             }
         }
-        return ("Задачи с таким идентификатором пока нет");
+        return null;
     }
 
     public int getTaskIndex(String heading, String description) {
@@ -124,20 +132,29 @@ public class TaskManager {
         }
     }
 
-    public void getSubtasks(int id) {
+    public List<Subtask> getSubtasks(int id) {
         if (epicTasks.containsKey(id)) {
-            ArrayList<Subtask> subtaskArray = subTasks.get(id);
-            if (subtaskArray == null || subtaskArray.isEmpty()) {
-                System.out.println("У этого эпика пока что нет задач");
-            } else {
-                for (Subtask st : subtaskArray) {
-                    System.out.println(st.printTask());
-                }
-            }
+            EpicTask epic = epicTasks.get(id);
+            return epic.getSubtasks();
         } else {
-            System.out.println("эпика с идентификатором " + id + " не существует");
+            return new ArrayList<>();
         }
     }
+
+//    public void getSubtasks(int id) {
+//        if (epicTasks.containsKey(id)) {
+//            ArrayList<Subtask> subtaskArray = subTasks.get(id);
+//            if (subtaskArray == null || subtaskArray.isEmpty()) {
+//                System.out.println("У этого эпика пока что нет задач");
+//            } else {
+//                for (Subtask st : subtaskArray) {
+//                    System.out.println(st.printTask());
+//                }
+//            }
+//        } else {
+//            System.out.println("эпика с идентификатором " + id + " не существует");
+//        }
+//    }
 
     public boolean removeTaskById(int id) {
         if (tasks.containsKey(id)) {
@@ -163,7 +180,6 @@ public class TaskManager {
         }
         return false;
     }
-
 
     public void checkStatus(int id, int status) {
         if (tasks.containsKey(id)) {
