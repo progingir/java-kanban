@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -32,7 +33,7 @@ public class Main {
                         System.out.println("Такая задача уже есть! Ее индекс: " + tasks.get(index).getId());
                     } else {
                         Task newTask = new Task(heading, description, index);
-                        manager.createTask(newTask).printTask();
+                        manager.createTask(newTask);
                         System.out.println("Задача успешно создана! Ее индекс: " + newTask.getId());
                     }
                     break;
@@ -73,13 +74,18 @@ public class Main {
                     id = scanner.nextInt();
 
                     if (tasks.containsKey(id)) {
-                        System.out.println(manager.getTaskById(id));
+                        System.out.println(manager.getTaskById(id).printTask());
                     } else if (epicTasks.containsKey(id)) {
-                        System.out.println(manager.getEpicTaskById(id));
+                        System.out.println(manager.getEpicTaskById(id).printTask());
                     } else {
-                        System.out.println(manager.getSubTaskById(id));
+                        for (List<Subtask> subtaskList : subTasks.values()) {
+                            for (Subtask subtask : subtaskList) {
+                                if (subtask.getId() == id) {
+                                    System.out.println(manager.getSubTaskById(id).printTask());
+                                }
+                            }
+                        }
                     }
-
                     break;
                 case 4:
                     System.out.println("Уверены, что хотите удалить все задачи?");
@@ -153,7 +159,7 @@ public class Main {
                     System.out.println("Введите идентификатор задачи");
                     id = scanner.nextInt();
                     int status = 0;
-                    if(!epicTasks.containsKey(id)){
+                    if (!epicTasks.containsKey(id)) {
                         System.out.println("Укажите статус задачи:");
                         System.out.println("1 - в процессе");
                         System.out.println("2 - сделана");
