@@ -106,19 +106,19 @@ public class Main {
                     break;
                 case 6:
                     System.out.println("== Список обычных задач: ==");
-                    manager.getAllTasks();
+                    System.out.println(manager.getAllTasks());
                     System.out.println();
                     System.out.println("== Список глобальных задач: ==");
-                    manager.getAllEpicTasks();
+                    System.out.println(manager.getAllEpicTasks());
                     System.out.println();
                     System.out.println("== Список подзадач: ==");
-                    manager.getAllSubTasks();
+                    System.out.println(manager.getAllSubTasks());
                     System.out.println();
                     break;
                 case 7:
                     System.out.println("Введите идентификатор эпика");
                     id = scanner.nextInt();
-                    manager.getSubtasks(id);
+                    System.out.println(manager.getSubtasks(id));
                     break;
                 case 8:
                     System.out.println("Введите название задачи:");
@@ -152,11 +152,14 @@ public class Main {
                 case 10:
                     System.out.println("Введите идентификатор задачи");
                     id = scanner.nextInt();
-                    System.out.println("Укажите статус задачи:");
-                    System.out.println("1 - в процессе");
-                    System.out.println("2 - сделана");
-                    int status = scanner.nextInt();
-                    manager.checkStatus(id, status);
+                    int status = 0;
+                    if(!epicTasks.containsKey(id)){
+                        System.out.println("Укажите статус задачи:");
+                        System.out.println("1 - в процессе");
+                        System.out.println("2 - сделана");
+                        status = scanner.nextInt();
+                    }
+                    System.out.println(manager.checkStatus(id, status));
                     System.out.println("Статус изменен!");
                     break;
                 case 11:

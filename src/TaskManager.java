@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.ArrayList;
 
 public class TaskManager {
     private final HashMap<Integer, Task> tasks;
@@ -26,7 +25,7 @@ public class TaskManager {
     }
 
     public List<Subtask> getAllSubTasks() {
-        List<Subtask> allSubtasks = new ArrayList<>();
+        ArrayList<Subtask> allSubtasks = new ArrayList<>();
         for (List<Subtask> subtasksForEpic : subTasks.values()) {
             allSubtasks.addAll(subtasksForEpic);
         }
@@ -39,7 +38,7 @@ public class TaskManager {
     }
 
     public void removeAllEpicTasks() {
-        Set<Integer> epicIds = new HashSet<>(epicTasks.keySet());
+        HashSet<Integer> epicIds = new HashSet<>(epicTasks.keySet());
 
         for (Integer epicId : epicIds) {
             subTasks.remove(epicId);
@@ -53,7 +52,7 @@ public class TaskManager {
 
         for (EpicTask epic : epicTasks.values()) {
             if (epic.getSubtasks().isEmpty()) {
-                epic.setStatus(Status.DONE);
+                epic.setStatus(Status.NEW);
             }
         }
     }
@@ -141,21 +140,6 @@ public class TaskManager {
         }
     }
 
-//    public void getSubtasks(int id) {
-//        if (epicTasks.containsKey(id)) {
-//            ArrayList<Subtask> subtaskArray = subTasks.get(id);
-//            if (subtaskArray == null || subtaskArray.isEmpty()) {
-//                System.out.println("У этого эпика пока что нет задач");
-//            } else {
-//                for (Subtask st : subtaskArray) {
-//                    System.out.println(st.printTask());
-//                }
-//            }
-//        } else {
-//            System.out.println("эпика с идентификатором " + id + " не существует");
-//        }
-//    }
-
     public boolean removeTaskById(int id) {
         if (tasks.containsKey(id)) {
             String taskKey = tasks.get(id).heading + " " + tasks.get(id).description;
@@ -181,28 +165,57 @@ public class TaskManager {
         return false;
     }
 
-    public void checkStatus(int id, int status) {
+    public Status checkStatus(int id, int status) {
         if (tasks.containsKey(id)) {
-            if (status == 1) {
-                tasks.get(id).setStatus(Status.IN_PROGRESS);
-            } else {
-                tasks.get(id).setStatus(Status.DONE);
-            }
-            return;
+            tasks.get(id).setStatus(status == 1 ? Status.IN_PROGRESS : Status.DONE);
+            return tasks.get(id).status;
         }
 
-        for (List<Subtask> subtasks : subTasks.values()) {
-            for (Subtask subtask : subtasks) {
+        if (epicTasks.containsKey(id)) {
+            EpicTask epicTask = epicTasks.get(id);
+            if (epicTask.getSubtasks().isEmpty()) {
+                epicTask.setStatus(Status.NEW);
+                return epicTask.status;
+            }
+
+            boolean flag = false;
+            int newCount = 0;
+            int doneCount = 0;
+            for (Subtask subtask : epicTask.getSubtasks()) {
+                if (subtask.status == Status.IN_PROGRESS) {
+                    flag = true;
+                    break;
+                } else if (subtask.status == Status.NEW) {
+                    newCount++;
+                } else if(subtask.status == Status.DONE){
+                    doneCount ++;
+                }
+            }
+
+            if (flag) {
+                epicTask.setStatus(Status.IN_PROGRESS);
+            } else if (newCount == epicTask.getSubtasks().size()) {
+                epicTask.setStatus(Status.NEW);
+            } else if (doneCount == epicTask.getSubtasks().size()){
+                epicTask.setStatus(Status.DONE);
+            } else{
+                epicTask.setStatus(Status.IN_PROGRESS);
+            }
+            return epicTask.status;
+        }
+
+        for (List<Subtask> subtaskList : subTasks.values()) {
+            for (Subtask subtask : subtaskList) {
                 if (subtask.getId() == id) {
-                    if (status == 1) {
-                        subtask.setStatus(Status.IN_PROGRESS);
-                    } else {
-                        subtask.setStatus(Status.DONE);
-                    }
+                    subtask.setStatus(status == 1 ? Status.IN_PROGRESS : Status.DONE);
+                    return subtask.status;
                 }
             }
         }
+
+        return null;
     }
+
 
     public boolean checkId(int id) {
         if (tasks.containsKey(id)) {
