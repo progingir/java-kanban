@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Managers {
 
@@ -6,6 +7,9 @@ public class Managers {
     private static InMemoryHistoryManager historyManager;
 
     public static TaskManager getDefault() {
+        if (taskManager == null) {
+            taskManager = new InMemoryTaskManager(new HashMap<>(), new HashMap<>(), new HashMap<>());
+        }
         return taskManager;
     }
 

@@ -19,14 +19,12 @@ public class Task {
         this.description = description;
     }
 
-
     public String printTask() {
         return "Обычная задача с идентификатором  " + id + "\n" +
                 "Название: " + heading + "\n" +
                 "Описание: " + description + "\n" +
                 "Статус: " + status + "\n";
     }
-
 
     public int getId() {
         return this.id;
