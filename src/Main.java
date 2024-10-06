@@ -14,7 +14,7 @@ public class Main {
         HashMap<Integer, EpicTask> epicTasks = new HashMap<>();
         HashMap<Integer, ArrayList<Subtask>> subTasks = new HashMap<>();
 
-        TaskManager manager = new TaskManager(tasks, epicTasks, subTasks);
+        InMemoryTaskManager manager = new InMemoryTaskManager(tasks, epicTasks, subTasks);
 
         while (true) {
             printMenu();
@@ -169,6 +169,9 @@ public class Main {
                     System.out.println("Статус изменен!");
                     break;
                 case 11:
+                    System.out.println(Managers.getDefaultHistory().getHistory());
+                    break;
+                case 12:
                     return;
             }
         }
@@ -186,6 +189,7 @@ public class Main {
         System.out.println("8 - Создать эпик");
         System.out.println("9 - Добавить подзадачи в эпик");
         System.out.println("10 - Отметить сделанную задачу");
-        System.out.println("11 - Выход");
+        System.out.println("11 - Показать историю просмотров");
+        System.out.println("12 - Выход");
     }
 }
