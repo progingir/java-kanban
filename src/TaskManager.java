@@ -29,6 +29,4 @@ public interface TaskManager {
     void updateTask(int id, int comm, String change);
 
     boolean removeTaskById(int id);
-
-    ArrayList<Task> getHistory();
 }

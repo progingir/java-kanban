@@ -1,11 +1,4 @@
-import java.lang.reflect.Array;
 import java.util.*;
-/*
-я убрала все строковые выводы в этом классе (потому что у нас не консольное приложение :), )
-но добавила их в main просто для удобства проверки
-А так поправила все, что нужно было (даже статус у эпиков работает как надо, представляете?)
-Вам хорошей проверки, а мне - сил для следующих правок
-*/
 
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks;
