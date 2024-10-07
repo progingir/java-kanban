@@ -16,7 +16,7 @@ class InMemoryHistoryManagerTest {
     void historyShouldContainTask() {
         String heading1 = "subtask";
         String description1 = "subtask description";
-        id = manager.getTaskIndex(heading1, description1);
+        id = manager.getTaskIndex(heading1, description1, "task");
         Task task = new Task(heading1, description1, id);
 
         historyManager.add(task);

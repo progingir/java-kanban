@@ -23,15 +23,15 @@ class InMemoryTaskManagerTest {
         String heading2 = "task";
         String description2 = "description";
 
-        int id1 = manager.getTaskIndex(heading1, description1);
-        int id2 = manager.getTaskIndex(heading2, description2);
+        int id1 = manager.getTaskIndex(heading1, description1, "task");
+        int id2 = manager.getTaskIndex(heading2, description2, "task");
 
         Assertions.assertEquals(id1, id2);
     }
 
     @Test
     public void shouldReturnTaskByID() {
-        id = manager.getTaskIndex(heading, description);
+        id = manager.getTaskIndex(heading, description, "task");
         tasks.put(task.id, task);
 
         Assertions.assertEquals(task, manager.getTaskById(task.id));
@@ -39,7 +39,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void shouldReturnEpicTaskByID() {
-        id = manager.getTaskIndex(heading, description);
+        id = manager.getTaskIndex(heading, description, "epic task");
         EpicTask epictask = new EpicTask(heading, description, id);
         epicTasks.put(epictask.id, epictask);
 
@@ -48,12 +48,12 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void shouldReturnSubtaskByID() {
-        id = manager.getTaskIndex(heading, description);
+        id = manager.getTaskIndex(heading, description, "epic task");
         EpicTask epictask = new EpicTask(heading, description, id);
 
         String heading1 = "subtask";
         String description1 = "subtask description";
-        id = manager.getTaskIndex(heading1, description1);
+        id = manager.getTaskIndex(heading1, description1, "subtask");
         Subtask task = new Subtask(heading1, description1, id, epictask.id);
 
         ArrayList<Subtask> subtaskArrayList = new ArrayList<>();
@@ -65,7 +65,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void taskShouldBeUnchangedAcrossAllFields() {
-        id = manager.getTaskIndex(heading, description);
+        id = manager.getTaskIndex(heading, description, "task");
         Task task = new Task(heading, description, id);
         manager.createTask(task);
         tasks.put(task.id, task);
@@ -80,7 +80,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void epicTaskShouldBeUnchangedAcrossAllFields() {
-        id = manager.getTaskIndex(heading, description);
+        id = manager.getTaskIndex(heading, description, "epic task");
         EpicTask task = new EpicTask(heading, description, id);
         manager.createEpicTask(task);
         epicTasks.put(task.id, task);
@@ -95,13 +95,13 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void subTaskShouldBeUnchangedAcrossAllFields() {
-        id = manager.getTaskIndex(heading, description);
+        id = manager.getTaskIndex(heading, description, "epic task");
         EpicTask epictask = new EpicTask(heading, description, id);
         epicTasks.put(epictask.id, epictask);
 
         String heading1 = "subtask";
         String description1 = "subtask description";
-        id = manager.getTaskIndex(heading1, description1);
+        id = manager.getTaskIndex(heading1, description1, "subtask");
         Subtask task = new Subtask(heading1, description1, id, epictask.id);
 
         manager.createSubTask(task);

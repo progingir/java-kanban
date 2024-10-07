@@ -14,7 +14,9 @@ public class InMemoryTaskManager implements TaskManager {
     private final Map<String, Integer> taskIndexMap = new HashMap<>();
     //private final ArrayList<Task> history = new ArrayList<>();
 
+
     int id = 0;
+    String type = "";
 
     public InMemoryTaskManager(HashMap<Integer, Task> tasks,
                                HashMap<Integer, EpicTask> epicTasks,
@@ -99,8 +101,8 @@ public class InMemoryTaskManager implements TaskManager {
         return null;
     }
 
-    public int getTaskIndex(String heading, String description) {
-        String taskKey = heading + " " + description;
+    public int getTaskIndex(String heading, String description, String type) {
+        String taskKey = heading + " " + description + " " + type;
         if (taskIndexMap.containsKey(taskKey)) {
             return taskIndexMap.get(taskKey);
         } else {
@@ -110,23 +112,26 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task createTask(Task task) {
+        type = "task";
         task.setId(++id);
         tasks.put(id, task);
-        taskIndexMap.put(task.heading + " " + task.description, id);
+        taskIndexMap.put(task.heading + " " + task.description + " " + type, id);
         return task;
     }
 
     @Override
     public EpicTask createEpicTask(EpicTask epicTask) {
+        type = "epic task";
         epicTask.setId(++id);
         epicTasks.put(id, epicTask);
-        taskIndexMap.put(epicTask.heading + " " + epicTask.description, id);
+        taskIndexMap.put(epicTask.heading + " " + epicTask.description + " " + type, id);
         return epicTask;
     }
 
     @Override
     public Subtask createSubTask(Subtask subtask) {
-        int index = getTaskIndex(subtask.heading, subtask.description);
+        type = "subtask";
+        int index = getTaskIndex(subtask.heading, subtask.description, type);
         if (index != -1) {
             for (Subtask existingSubtask : subTasks.getOrDefault(subtask.getEpicTask(epicTasks).id,
                     new ArrayList<>())) {
@@ -143,7 +148,7 @@ public class InMemoryTaskManager implements TaskManager {
                 subtaskArray.add(subtask);
                 subTasks.put(subtask.getEpicTask(epicTasks).id, subtaskArray);
             }
-            taskIndexMap.put(subtask.heading + " " + subtask.description, id);
+            taskIndexMap.put(subtask.heading + " " + subtask.description + " " + type, id);
             return subtask;
         }
         return null;
@@ -151,10 +156,18 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(int id, int comm, String change) {
-        if (comm == 1) {
-            tasks.get(id).setHeading(change);
-        } else if (comm == 2) {
-            tasks.get(id).setDescription(change);
+        if(tasks.containsKey(id)){
+            if (comm == 1) {
+                tasks.get(id).setHeading(change);
+            } else if (comm == 2) {
+                tasks.get(id).setDescription(change);
+            }
+        } else if(epicTasks.containsKey(id)){
+            if (comm == 1) {
+                epicTasks.get(id).setHeading(change);
+            } else if (comm == 2) {
+                epicTasks.get(id).setDescription(change);
+            }
         }
     }
 
@@ -244,10 +257,18 @@ public class InMemoryTaskManager implements TaskManager {
         return null;
     }
 
-    public boolean checkId(int id) {
+    public boolean checkTaskId(int id) {
         if (tasks.containsKey(id)) {
             return true;
-        } else return epicTasks.containsKey(id);
+        }
+        return false;
+    }
+
+    public boolean checkEpicTaskId(int id) {
+        if (epicTasks.containsKey(id)) {
+            return true;
+        }
+        return false;
     }
 
     @Override

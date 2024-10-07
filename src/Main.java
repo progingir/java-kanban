@@ -27,7 +27,7 @@ public class Main {
                     heading = scanner.nextLine();
                     System.out.println("Введите описание задачи:");
                     description = scanner.nextLine();
-                    int index = manager.getTaskIndex(heading, description);
+                    int index = manager.getTaskIndex(heading, description, "task");
 
                     if (index != -1) {
                         System.out.println("Такая задача уже есть! Ее индекс: " + tasks.get(index).getId());
@@ -40,7 +40,7 @@ public class Main {
                 case 2:
                     System.out.println("Введите идентификатор задачи, которую хотите отредактировать: ");
                     id = scanner.nextInt();
-                    if (manager.checkId(id)) {
+                    if (manager.checkTaskId(id) || manager.checkEpicTaskId(id)) {
                         while (true) {
                             System.out.println("Выберите нужное действие:");
                             System.out.println("1 - Редактировать название");
@@ -131,7 +131,7 @@ public class Main {
                     heading = scanner.nextLine();
                     System.out.println("Введите описание задачи:");
                     description = scanner.nextLine();
-                    index = manager.getTaskIndex(heading, description);
+                    index = manager.getTaskIndex(heading, description, "epic task");
 
                     if (index != -1) {
                         System.out.println("Такая глобальная задача уже есть! Ее идентификатор - " + epicTasks.get(index).getId());
@@ -145,6 +145,10 @@ public class Main {
                     System.out.println("Укажите идентификатор эпика:");
                     int epicId = scanner.nextInt();
                     scanner.nextLine();
+                    if(!manager.checkEpicTaskId(epicId)){
+                        System.out.println("Эпика с таким индексом нет");
+                        break;
+                    }
                     System.out.println("Введите заголовок подзадачи");
                     heading = scanner.nextLine();
                     System.out.println("Введите описание подзадачи:");

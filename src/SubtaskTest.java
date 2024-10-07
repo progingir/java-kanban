@@ -28,10 +28,10 @@ class SubtaskTest {
 
     @Test
     public void shouldGiveEpic() {
-        id = manager.getTaskIndex(epicHeading, epicDescription);
+        id = manager.getTaskIndex(epicHeading, epicDescription, "epic task");
         EpicTask epic = new EpicTask(epicHeading, epicDescription, id);
 
-        id = manager.getTaskIndex(subHeading, subDescription);
+        id = manager.getTaskIndex(subHeading, subDescription, "subtask");
         Subtask subtask = new Subtask(subHeading, subDescription, id, epic.id);
 
         epicTaskHashMap.put(epic.id, epic);
@@ -41,10 +41,10 @@ class SubtaskTest {
 
     @Test
     public void shouldGiveNullIfEpicIsNotInTheMap() {
-        id = manager.getTaskIndex(epicHeading, epicDescription);
+        id = manager.getTaskIndex(epicHeading, epicDescription, "epic task");
         EpicTask epic = new EpicTask(epicHeading, epicDescription, id);
 
-        id = manager.getTaskIndex(subHeading_, subDescription_);
+        id = manager.getTaskIndex(subHeading_, subDescription_, "subtask");
         Subtask subtaskSecond = new Subtask(subHeading_, subDescription_, id, 78);
 
         epicTaskHashMap.put(epic.id, epic);
