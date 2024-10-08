@@ -1,3 +1,5 @@
+package tracker;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,4 +31,6 @@ public interface TaskManager {
     void updateTask(int id, int comm, String change);
 
     boolean removeTaskById(int id);
+
+    ArrayList<Task> getHistory();
 }

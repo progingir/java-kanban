@@ -1,5 +1,11 @@
+package test;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import tracker.EpicTask;
+import tracker.InMemoryTaskManager;
+import tracker.Subtask;
+import tracker.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,18 +38,18 @@ class InMemoryTaskManagerTest {
     @Test
     public void shouldReturnTaskByID() {
         id = manager.getTaskIndex(heading, description, "task");
-        tasks.put(task.id, task);
+        tasks.put(task.getId(), task);
 
-        Assertions.assertEquals(task, manager.getTaskById(task.id));
+        Assertions.assertEquals(task, manager.getTaskById(task.getId()));
     }
 
     @Test
     public void shouldReturnEpicTaskByID() {
         id = manager.getTaskIndex(heading, description, "epic task");
         EpicTask epictask = new EpicTask(heading, description, id);
-        epicTasks.put(epictask.id, epictask);
+        epicTasks.put(epictask.getId(), epictask);
 
-        Assertions.assertEquals(epictask, manager.getEpicTaskById(epictask.id));
+        Assertions.assertEquals(epictask, manager.getEpicTaskById(epictask.getId()));
     }
 
     @Test
@@ -54,13 +60,13 @@ class InMemoryTaskManagerTest {
         String heading1 = "subtask";
         String description1 = "subtask description";
         id = manager.getTaskIndex(heading1, description1, "subtask");
-        Subtask task = new Subtask(heading1, description1, id, epictask.id);
+        Subtask task = new Subtask(heading1, description1, id, epictask.getId());
 
         ArrayList<Subtask> subtaskArrayList = new ArrayList<>();
         subtaskArrayList.add(task);
-        subTasks.put(epictask.id, subtaskArrayList);
+        subTasks.put(epictask.getId(), subtaskArrayList);
 
-        Assertions.assertEquals(task, manager.getSubTaskById(task.id));
+        Assertions.assertEquals(task, manager.getSubTaskById(task.getId()));
     }
 
     @Test
@@ -68,14 +74,14 @@ class InMemoryTaskManagerTest {
         id = manager.getTaskIndex(heading, description, "task");
         Task task = new Task(heading, description, id);
         manager.createTask(task);
-        tasks.put(task.id, task);
+        tasks.put(task.getId(), task);
 
-        Task fetchedTask = manager.getTaskById(task.id);
+        Task fetchedTask = manager.getTaskById(task.getId());
 
-        Assertions.assertEquals(task.heading, fetchedTask.heading);
-        Assertions.assertEquals(task.description, fetchedTask.description);
-        Assertions.assertEquals(task.id, fetchedTask.id);
-        Assertions.assertEquals(task.status, fetchedTask.status);
+        Assertions.assertEquals(task.getHeading(), fetchedTask.getHeading());
+        Assertions.assertEquals(task.getDescription(), fetchedTask.getDescription());
+        Assertions.assertEquals(task.getId(), fetchedTask.getId());
+        Assertions.assertEquals(task.getStatus(), fetchedTask.getStatus());
     }
 
     @Test
@@ -83,38 +89,38 @@ class InMemoryTaskManagerTest {
         id = manager.getTaskIndex(heading, description, "epic task");
         EpicTask task = new EpicTask(heading, description, id);
         manager.createEpicTask(task);
-        epicTasks.put(task.id, task);
+        epicTasks.put(task.getId(), task);
 
-        EpicTask fetchedTask = manager.getEpicTaskById(task.id);
+        EpicTask fetchedTask = manager.getEpicTaskById(task.getId());
 
-        Assertions.assertEquals(task.heading, fetchedTask.heading);
-        Assertions.assertEquals(task.description, fetchedTask.description);
-        Assertions.assertEquals(task.id, fetchedTask.id);
-        Assertions.assertEquals(task.status, fetchedTask.status);
+        Assertions.assertEquals(task.getHeading(), fetchedTask.getHeading());
+        Assertions.assertEquals(task.getDescription(), fetchedTask.getDescription());
+        Assertions.assertEquals(task.getId(), fetchedTask.getId());
+        Assertions.assertEquals(task.getStatus(), fetchedTask.getStatus());
     }
 
     @Test
     public void subTaskShouldBeUnchangedAcrossAllFields() {
         id = manager.getTaskIndex(heading, description, "epic task");
         EpicTask epictask = new EpicTask(heading, description, id);
-        epicTasks.put(epictask.id, epictask);
+        epicTasks.put(epictask.getId(), epictask);
 
         String heading1 = "subtask";
         String description1 = "subtask description";
         id = manager.getTaskIndex(heading1, description1, "subtask");
-        Subtask task = new Subtask(heading1, description1, id, epictask.id);
+        Subtask task = new Subtask(heading1, description1, id, epictask.getId());
 
         manager.createSubTask(task);
         ArrayList<Subtask> subtaskArrayList = new ArrayList<>();
         subtaskArrayList.add(task);
-        subTasks.put(epictask.id, subtaskArrayList);
+        subTasks.put(epictask.getId(), subtaskArrayList);
 
-        Subtask fetchedTask = manager.getSubTaskById(task.id);
+        Subtask fetchedTask = manager.getSubTaskById(task.getId());
 
-        Assertions.assertEquals(task.heading, fetchedTask.heading);
-        Assertions.assertEquals(task.description, fetchedTask.description);
-        Assertions.assertEquals(task.id, fetchedTask.id);
-        Assertions.assertEquals(task.epicId, fetchedTask.epicId);
-        Assertions.assertEquals(task.status, fetchedTask.status);
+        Assertions.assertEquals(task.getHeading(), fetchedTask.getHeading());
+        Assertions.assertEquals(task.getDescription(), fetchedTask.getDescription());
+        Assertions.assertEquals(task.getId(), fetchedTask.getId());
+        Assertions.assertEquals(task.getId(), fetchedTask.getId());
+        Assertions.assertEquals(task.getStatus(), fetchedTask.getStatus());
     }
 }

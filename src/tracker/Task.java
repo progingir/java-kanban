@@ -1,3 +1,5 @@
+package tracker;
+
 public class Task {
     protected String heading;
     protected String description;
@@ -19,6 +21,14 @@ public class Task {
         this.description = description;
     }
 
+    public Status getStatus(){
+        return status;
+    }
+
+    public String getDescription(){
+        return description;
+    }
+
     public String printTask() {
         return "Обычная задача с идентификатором  " + id + "\n" +
                 "Название: " + heading + "\n" +
@@ -32,6 +42,10 @@ public class Task {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getHeading(){
+        return heading;
     }
 
     public void setStatus(Status status) {

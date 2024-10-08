@@ -1,5 +1,11 @@
+package test;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import tracker.EpicTask;
+import tracker.InMemoryTaskManager;
+import tracker.Subtask;
+import tracker.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,9 +38,9 @@ class SubtaskTest {
         EpicTask epic = new EpicTask(epicHeading, epicDescription, id);
 
         id = manager.getTaskIndex(subHeading, subDescription, "subtask");
-        Subtask subtask = new Subtask(subHeading, subDescription, id, epic.id);
+        Subtask subtask = new Subtask(subHeading, subDescription, id, epic.getId());
 
-        epicTaskHashMap.put(epic.id, epic);
+        epicTaskHashMap.put(epic.getId(), epic);
 
         Assertions.assertEquals(subtask.getEpicTask(epicTaskHashMap), epic);
     }
@@ -47,7 +53,7 @@ class SubtaskTest {
         id = manager.getTaskIndex(subHeading_, subDescription_, "subtask");
         Subtask subtaskSecond = new Subtask(subHeading_, subDescription_, id, 78);
 
-        epicTaskHashMap.put(epic.id, epic);
+        epicTaskHashMap.put(epic.getId(), epic);
 
         assertNull(subtaskSecond.getEpicTask(epicTaskHashMap));
     }
