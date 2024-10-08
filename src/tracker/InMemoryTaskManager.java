@@ -1,3 +1,5 @@
+package tracker;
+
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -5,8 +7,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, EpicTask> epicTasks;
     private final HashMap<Integer, ArrayList<Subtask>> subTasks;
     private final Map<String, Integer> taskIndexMap = new HashMap<>();
-    //private final ArrayList<Task> history = new ArrayList<>();
-
+    HistoryManager historyManager = Managers.getDefaultHistory();
 
     int id = 0;
     String type = "";
@@ -66,17 +67,21 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+
+
+
+
     @Override
     public Task getTaskById(int id) {
-        Managers.getDefaultHistory().checkHistory();
-        Managers.getDefaultHistory().add(tasks.get(id));
+        historyManager.checkHistory();
+        historyManager.add(tasks.get(id));
         return tasks.get(id);
     }
 
     @Override
     public EpicTask getEpicTaskById(int id) {
-        Managers.getDefaultHistory().checkHistory();
-        Managers.getDefaultHistory().add(epicTasks.get(id));
+        historyManager.checkHistory();
+        historyManager.add(epicTasks.get(id));
         return epicTasks.get(id);
     }
 
@@ -85,14 +90,20 @@ public class InMemoryTaskManager implements TaskManager {
         for (List<Subtask> subtasks : subTasks.values()) {
             for (Subtask subtask : subtasks) {
                 if (subtask.getId() == id) {
-                    Managers.getDefaultHistory().checkHistory();
-                    Managers.getDefaultHistory().add(subtask);
+                    historyManager.checkHistory();
+                    historyManager.add(subtask);
                     return subtask;
                 }
             }
         }
         return null;
     }
+
+
+
+
+
+
 
     public int getTaskIndex(String heading, String description, String type) {
         String taskKey = heading + " " + description + " " + type;
@@ -265,7 +276,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Task> getHistory() {
-        return Managers.getDefaultHistory().getHistory();
+    public ArrayList<Task> getHistory(){
+        return historyManager.getHistory();
     }
 }

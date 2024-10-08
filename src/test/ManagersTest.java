@@ -1,4 +1,11 @@
+package test;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import tracker.InMemoryHistoryManager;
+import tracker.Managers;
+import tracker.TaskManager;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ManagersTest {
@@ -10,7 +17,7 @@ public class ManagersTest {
 
         assertNotNull(history1);
         assertNotNull(history2);
-        assertEquals(history1, history2);
+        Assertions.assertEquals(history1, history2);
     }
 
     @Test
@@ -20,6 +27,6 @@ public class ManagersTest {
 
         assertNotNull(default1);
         assertNotNull(default2);
-        assertEquals(default1, default2);
+        Assertions.assertEquals(default1, default2);
     }
 }
