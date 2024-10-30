@@ -178,6 +178,9 @@ public class Main {
                     System.out.println(Managers.getDefaultHistory().getHistory());
                     break;
                 case 12:
+                    runOptionalScen(manager);
+                    return;
+                case 13:
                     return;
             }
         }
@@ -196,6 +199,56 @@ public class Main {
         System.out.println("9 - Добавить подзадачи в эпик");
         System.out.println("10 - Отметить сделанную задачу");
         System.out.println("11 - Показать историю просмотров");
-        System.out.println("12 - Выход");
+        System.out.println("12 - Запустить опциональный сценарий");
+        System.out.println("13 - Выход");
+    }
+
+    private static void runOptionalScen(InMemoryTaskManager manager) {
+        // Создаем две обычные задачи
+        Task task1 = new Task("Task 1", "Description for Task 1", 1);
+        Task task2 = new Task("Task 2", "Description for Task 2", 2);
+        manager.createTask(task1);
+        manager.createTask(task2);
+
+        // Создаем эпик без подзадач
+        EpicTask epicWithoutSubtasks = new EpicTask("Epic without Subtasks", "Description for Epic without Subtasks", 3);
+        manager.createEpicTask(epicWithoutSubtasks);
+
+        // Создаем эпик с тремя подзадачами
+        EpicTask epicWithSubtasks = new EpicTask("Epic with Subtasks", "Description for Epic with Subtasks", 4);
+        manager.createEpicTask(epicWithSubtasks);
+
+        // Создаем подзадачи для эпика
+        Subtask subtask1 = new Subtask("Subtask 1", "Description for Subtask 1", 5, epicWithSubtasks.getId());
+        Subtask subtask2 = new Subtask("Subtask 2", "Description for Subtask 2", 6, epicWithSubtasks.getId());
+        Subtask subtask3 = new Subtask("Subtask 3", "Description for Subtask 3", 7, epicWithSubtasks.getId());
+
+        manager.createSubTask(subtask1);
+        manager.createSubTask(subtask2);
+        manager.createSubTask(subtask3);
+        epicWithSubtasks.addSubtask(subtask1);
+        epicWithSubtasks.addSubtask(subtask2);
+        epicWithSubtasks.addSubtask(subtask3);
+
+        // Запрашиваем созданные задачи в разном порядке
+        System.out.println(manager.getTaskById(task1.getId()).printTask());
+        System.out.println(manager.getTaskById(task2.getId()).printTask());
+        System.out.println(manager.getEpicTaskById(epicWithoutSubtasks.getId()).printTask());
+        System.out.println(manager.getEpicTaskById(epicWithSubtasks.getId()).printTask());
+        System.out.println(manager.getEpicTaskById(epicWithoutSubtasks.getId()).printTask());
+        System.out.println(manager.getTaskById(task2.getId()).printTask());
+
+        // Выводим историю
+        System.out.println("История просмотров: " + Managers.getDefaultHistory().getHistory());
+
+        // Удаляем task2 и проверяем историю
+        manager.removeTaskById(task2.getId());
+        System.out.println("Удалили задачу Task 2");
+        System.out.println("История просмотров после удаления Task 2: " + Managers.getDefaultHistory().getHistory());
+
+        // Удаляем эпик с подзадачами
+        manager.removeTaskById(epicWithSubtasks.getId());
+        System.out.println("Удалили эпик с подзадачами.");
+        System.out.println("История просмотров после удаления эпика с подзадачами: " + Managers.getDefaultHistory().getHistory());
     }
 }

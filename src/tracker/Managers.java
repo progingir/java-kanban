@@ -17,7 +17,7 @@ public class Managers {
 
     public static InMemoryHistoryManager getDefaultHistory(){
         if (historyManager == null) {
-            historyManager = new InMemoryHistoryManager(new ArrayList<>());
+            historyManager = new InMemoryHistoryManager();
         }
         return historyManager;
     }
