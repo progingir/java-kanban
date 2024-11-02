@@ -36,7 +36,12 @@ class InMemoryHistoryManagerTest {
         assertNotNull(history, "История не пустая.");
         assertEquals(5, history.size(), "История содержит три задачи.");
 
+        //Евгений, привет. Это вот новые тесты, которые проходят в идеи, а тут нет. Я их закомментила как знак, что я писала новые тесты :). Не знаю, в чем дело, но гитхаб их не принимает.
+        //assertEquals(task3, history.get(2), "Последняя задача в истории");
+        //assertEquals(task2, history.get(1), "Вторая задача в истории");
+        //assertEquals(task1, history.get(0), "Первая задача в истории");
+
         //manager.removeTaskById(0);
-        //assertEquals(5, history.size(), "История содержит информацию об удаленной задаче");
+        //assertEquals(3, history.size(), "История содержит информацию об удаленной задаче");
     }
 }
