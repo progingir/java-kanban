@@ -1,4 +1,4 @@
-package tracker;
+import tracker.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -159,7 +159,7 @@ public class Main {
                     Subtask newSubtask = new Subtask(heading, description, 0, epicId);
                     epicTasks.get(epicId).addSubtask(newSubtask);
                     Subtask createdSubtask = manager.createSubTask(newSubtask);
-                    System.out.println("Подзадача успешно создана! Ее идентификатор - " + createdSubtask.id);
+                    System.out.println("Подзадача успешно создана! Ее идентификатор - " + createdSubtask.getId());
                     break;
                 case 10:
                     System.out.println("Введите идентификатор задачи");
