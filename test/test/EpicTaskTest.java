@@ -26,9 +26,9 @@ class EpicTaskTest {
 
     @Test
     public void shouldGiveListOfSubtasks() {
-        id = manager.getTaskIndex(epicHeading,epicDescription, "epic task");
+        id = manager.getTaskIndex(epicHeading, epicDescription, "epic task");
         EpicTask epicTask = new EpicTask(epicHeading, epicDescription, id);
-        id = manager.getTaskIndex(subHeading,subDescription, "subtask");
+        id = manager.getTaskIndex(subHeading, subDescription, "subtask");
         Subtask subtask = new Subtask(subHeading, subDescription, id, epicTask.getId());
 
         ArrayList<Subtask> expectedSubtasks = new ArrayList<>();

@@ -21,19 +21,16 @@ public class Task {
         this.description = description;
     }
 
-    public Status getStatus(){
+    public Status getStatus() {
         return status;
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return description;
     }
 
     public String printTask() {
-        return "Обычная задача с идентификатором  " + id + "\n" +
-                "Название: " + heading + "\n" +
-                "Описание: " + description + "\n" +
-                "Статус: " + status + "\n";
+        return "Обычная задача с идентификатором  " + id + "\n" + "Название: " + heading + "\n" + "Описание: " + description + "\n" + "Статус: " + status + "\n";
     }
 
     public int getId() {
@@ -44,7 +41,7 @@ public class Task {
         this.id = id;
     }
 
-    public String getHeading(){
+    public String getHeading() {
         return heading;
     }
 

@@ -1,6 +1,5 @@
 package tracker;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Managers {
@@ -15,9 +14,9 @@ public class Managers {
         return taskManager;
     }
 
-    public static InMemoryHistoryManager getDefaultHistory(){
+    public static InMemoryHistoryManager getDefaultHistory() {
         if (historyManager == null) {
-            historyManager = new InMemoryHistoryManager(new ArrayList<>());
+            historyManager = new InMemoryHistoryManager();
         }
         return historyManager;
     }
