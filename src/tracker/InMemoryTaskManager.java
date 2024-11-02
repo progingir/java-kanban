@@ -12,9 +12,7 @@ public class InMemoryTaskManager implements TaskManager {
     int id = 0;
     String type = "";
 
-    public InMemoryTaskManager(HashMap<Integer, Task> tasks,
-                               HashMap<Integer, EpicTask> epicTasks,
-                               HashMap<Integer, ArrayList<Subtask>> subTasks) {
+    public InMemoryTaskManager(HashMap<Integer, Task> tasks, HashMap<Integer, EpicTask> epicTasks, HashMap<Integer, ArrayList<Subtask>> subTasks) {
         this.tasks = tasks;
         this.epicTasks = epicTasks;
         this.subTasks = subTasks;
@@ -125,8 +123,7 @@ public class InMemoryTaskManager implements TaskManager {
         type = "subtask";
         int index = getTaskIndex(subtask.heading, subtask.description, type);
         if (index != -1) {
-            for (Subtask existingSubtask : subTasks.getOrDefault(subtask.getEpicTask(epicTasks).id,
-                    new ArrayList<>())) {
+            for (Subtask existingSubtask : subTasks.getOrDefault(subtask.getEpicTask(epicTasks).id, new ArrayList<>())) {
                 if (existingSubtask.getId() == index) {
                     return existingSubtask;
                 }
@@ -148,13 +145,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(int id, int comm, String change) {
-        if(tasks.containsKey(id)){
+        if (tasks.containsKey(id)) {
             if (comm == 1) {
                 tasks.get(id).setHeading(change);
             } else if (comm == 2) {
                 tasks.get(id).setDescription(change);
             }
-        } else if(epicTasks.containsKey(id)){
+        } else if (epicTasks.containsKey(id)) {
             if (comm == 1) {
                 epicTasks.get(id).setHeading(change);
             } else if (comm == 2) {
@@ -272,7 +269,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Task> getHistory(){
+    public ArrayList<Task> getHistory() {
         return historyManager.getHistory();
     }
 }
