@@ -34,7 +34,7 @@ class InMemoryHistoryManagerTest {
 
         final ArrayList<Task> history = historyManager.getHistory();
         assertNotNull(history, "История не пустая.");
-        assertEquals(5, history.size(), "История содержит три задачи.");
+        assertEquals(3, history.size(), "История содержит три задачи.");
         assertEquals(task3, history.get(2), "Последняя задача в истории");
         assertEquals(task2, history.get(1), "Вторая задача в истории");
         assertEquals(task1, history.get(0), "Первая задача в истории");
