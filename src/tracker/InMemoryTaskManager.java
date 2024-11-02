@@ -43,6 +43,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeAllTasks() {
         tasks.clear();
         taskIndexMap.clear();
+        historyManager.clear();
     }
 
     @Override
@@ -67,20 +68,14 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-
-
-
-
     @Override
     public Task getTaskById(int id) {
-        historyManager.checkHistory();
         historyManager.add(tasks.get(id));
         return tasks.get(id);
     }
 
     @Override
     public EpicTask getEpicTaskById(int id) {
-        historyManager.checkHistory();
         historyManager.add(epicTasks.get(id));
         return epicTasks.get(id);
     }
@@ -90,7 +85,6 @@ public class InMemoryTaskManager implements TaskManager {
         for (List<Subtask> subtasks : subTasks.values()) {
             for (Subtask subtask : subtasks) {
                 if (subtask.getId() == id) {
-                    historyManager.checkHistory();
                     historyManager.add(subtask);
                     return subtask;
                 }
@@ -98,12 +92,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
         return null;
     }
-
-
-
-
-
-
 
     public int getTaskIndex(String heading, String description, String type) {
         String taskKey = heading + " " + description + " " + type;
@@ -190,18 +178,26 @@ public class InMemoryTaskManager implements TaskManager {
             String taskKey = tasks.get(id).heading + " " + tasks.get(id).description;
             taskIndexMap.remove(taskKey);
             tasks.remove(id);
+            historyManager.remove(id);
             return true;
         } else if (epicTasks.containsKey(id)) {
             String taskKey = epicTasks.get(id).heading + " " + epicTasks.get(id).description;
             taskIndexMap.remove(taskKey);
             epicTasks.remove(id);
+            if (!subTasks.isEmpty() && subTasks.containsKey(id)) {
+                for (Subtask subtask : subTasks.get(id)) {
+                    historyManager.remove(subtask.getId());
+                }
+            }
             subTasks.remove(id);
+            historyManager.remove(id);
             return true;
         } else if (!subTasks.isEmpty()) {
             for (List<Subtask> subtasks : subTasks.values()) {
                 for (Subtask subtask : subtasks) {
                     if (subtask.getId() == id) {
                         subtasks.remove(subtask);
+                        historyManager.remove(id);
                         return true;
                     }
                 }
