@@ -12,6 +12,8 @@ public class InMemoryTaskManager implements TaskManager {
     int id = 0;
     String type = "";
 
+    
+
     public InMemoryTaskManager(HashMap<Integer, Task> tasks, HashMap<Integer, EpicTask> epicTasks, HashMap<Integer, ArrayList<Subtask>> subTasks) {
         this.tasks = tasks;
         this.epicTasks = epicTasks;

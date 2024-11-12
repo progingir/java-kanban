@@ -1,5 +1,6 @@
 import tracker.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +17,17 @@ public class Main {
         HashMap<Integer, EpicTask> epicTasks = new HashMap<>();
         HashMap<Integer, ArrayList<Subtask>> subTasks = new HashMap<>();
 
-        InMemoryTaskManager manager = new InMemoryTaskManager(tasks, epicTasks, subTasks);
+
+        String fileName = "tasks.csv";
+        File file = new File(fileName);
+
+        FileBackedTaskManager manager;
+        if (file.exists()) {
+            manager = FileBackedTaskManager.loadFromFile(file);
+        } else {
+            manager = new FileBackedTaskManager(tasks, epicTasks, subTasks, fileName);
+        }
+
 
         while (true) {
             printMenu();
@@ -74,6 +85,7 @@ public class Main {
                 case 3:
                     System.out.println("Введите идентификатор задачи, которую хотите посмотреть:");
                     id = scanner.nextInt();
+
 
                     if (tasks.containsKey(id)) {
                         System.out.println(manager.getTaskById(id).printTask());
