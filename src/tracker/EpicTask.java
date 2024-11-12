@@ -20,9 +20,6 @@ public class EpicTask extends Task {
 
     @Override
     public String printTask() {
-        return "Глобальная задача с идентификатором " + id + "\n" +
-                "Название: " + heading + "\n" +
-                "Описание: " + description + "\n" +
-                "Статус: " + status + "\n";
+        return "Глобальная задача с идентификатором " + id + "\n" + "Название: " + heading + "\n" + "Описание: " + description + "\n" + "Статус: " + status + "\n";
     }
 }

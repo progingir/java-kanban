@@ -22,10 +22,6 @@ public class Subtask extends Task {
 
     @Override
     public String printTask() {
-        return "Подзадача с идентификатором " + id + "\n" +
-                "Название: " + heading + "\n" +
-                "Описание: " + description + "\n" +
-                "Статус: " + status + "\n" +
-                "Принадлежит эпику с идентификатором " + epicId + "\n";
+        return "Подзадача с идентификатором " + id + "\n" + "Название: " + heading + "\n" + "Описание: " + description + "\n" + "Статус: " + status + "\n" + "Принадлежит эпику с идентификатором " + epicId + "\n";
     }
 }
