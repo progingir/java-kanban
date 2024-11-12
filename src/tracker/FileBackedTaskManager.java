@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private final String filePath; // Путь к файлу для автосохранения
+    private final String filePath; // путь к файлу для автосохранения
 
     public FileBackedTaskManager(HashMap<Integer, Task> tasks, HashMap<Integer, EpicTask> epicTasks, HashMap<Integer, ArrayList<Subtask>> subTasks, String filePath) {
         super(tasks, epicTasks, subTasks);
@@ -21,7 +21,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public void load() {
         try {
             List<String> lines = Files.readAllLines(Path.of(filePath));
-            for (String line : lines.subList(0, lines.size())) { // Пропускаем заголовок
+            for (String line : lines.subList(0, lines.size())) { // пропускаем заголовок
                 String[] parts = line.split(",");
                 switch (parts[1]) {
                     case "TASK":
@@ -44,39 +44,37 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    // Статический метод для загрузки данных из файла
+    // статический метод для загрузки данных из файла
     public static FileBackedTaskManager loadFromFile(File file) {
-        // Создаем новый экземпляр FileBackedTaskManager с пустыми коллекциями
         FileBackedTaskManager manager = new FileBackedTaskManager(new HashMap<>(), new HashMap<>(), new HashMap<>(), file.getPath());
-        // Загружаем данные из файла
+        // загружаем данные из файла
         manager.load();
         return manager;
     }
 
-    // Метод для сохранения состояния в файл
+    // метод для сохранения состояния в файл
     public void save() {
         StringBuilder csvData = new StringBuilder();
         csvData.append("id,type,name,status,description,epic\n");
 
-        // Сохранение задач
+        // сохранение задач
         for (Task task : super.getAllTasks()) {
             csvData.append(task.toString()).append("\n");
         }
 
-        // Сохранение эпиков
+        // сохранение эпиков
         for (EpicTask epic : super.getAllEpicTasks()) {
             csvData.append(epic.toString()).append("\n");
         }
 
-        // Сохранение подзадач
+        // сохранение подзадач
         for (Subtask subtask : super.getAllSubTasks()) {
             csvData.append(subtask.toString()).append("\n");
         }
 
-        // Запись в файл
+        // запись в файл
         try (FileWriter writer = new FileWriter(filePath)) {
             writer.write(csvData.toString());
-            System.out.println("Данные сохранены в файл: " + filePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -86,21 +84,21 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public Task createTask(Task task) {
         Task createdTask = super.createTask(task);
-        save(); // Сохранение после создания задачи
+        save();
         return createdTask;
     }
 
     @Override
     public EpicTask createEpicTask(EpicTask epicTask) {
         EpicTask createdEpic = super.createEpicTask(epicTask);
-        save(); // Сохранение после создания эпика
+        save();
         return createdEpic;
     }
 
     @Override
     public Subtask createSubTask(Subtask subtask) {
         Subtask createdSubtask = super.createSubTask(subtask);
-        save(); // Сохранение после создания подзадачи
+        save();
         return createdSubtask;
     }
 
@@ -108,7 +106,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public boolean removeTaskById(int id) {
         boolean removed = super.removeTaskById(id);
         if (removed) {
-            save(); // Сохранение после удаления задачи
+            save();
         }
         return removed;
     }
@@ -116,24 +114,24 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public void removeAllTasks() {
         super.removeAllTasks();
-        save(); // Сохранение после удаления всех задач
+        save();
     }
 
     @Override
     public void removeAllEpicTasks() {
         super.removeAllEpicTasks();
-        save(); // Сохранение после удаления всех эпиков
+        save();
     }
 
     @Override
     public void removeAllSubTasks() {
         super.removeAllSubTasks();
-        save(); // Сохранение после удаления всех подзадач
+        save();
     }
 
     @Override
     public void updateTask(int id, int comm, String change) {
         super.updateTask(id, comm, change);
-        save(); // Сохранение после обновления задачи
+        save();
     }
 }
