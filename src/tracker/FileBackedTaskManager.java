@@ -49,6 +49,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                             epicSubtasks.add(subtask);
                             lastId = Math.max(lastId, subtask.getId());
                         }
+                        // Добавляем подзадачу в соответствующий эпик
+                        if (epicTasks.containsKey(subtask.epicId)) {
+                            EpicTask associatedEpic = epicTasks.get(subtask.epicId);
+                            associatedEpic.addSubtask(subtask); // Связываем подзадачу с эпиком
+                        }
                         break;
                     default:
                         throw new IllegalArgumentException("Неизвестный тип задачи: " + parts[1]);
@@ -58,6 +63,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             throw new ManagerSaveException("Ошибка при загрузке данных из файла: " + filePath, e);
         }
     }
+
 
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager manager = new FileBackedTaskManager(new HashMap<>(), new HashMap<>(), new HashMap<>(), file.getPath());

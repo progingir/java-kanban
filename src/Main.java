@@ -3,7 +3,6 @@ import tracker.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -179,7 +178,7 @@ public class Main {
                     description = scanner.nextLine();
 
                     Subtask newSubtask = new Subtask(heading, description, 0, epicId);
-                    Subtask createdSubtask = manager.createSubTask(newSubtask); // Создаем подзадачу через менеджер
+                    Subtask createdSubtask = manager.createSubTask(newSubtask);
                     System.out.println("Подзадача успешно создана! Ее идентификатор - " + createdSubtask.getId());
                     break;
 

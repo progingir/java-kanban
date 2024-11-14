@@ -27,7 +27,7 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return getId() + "," + Type.SUB + "," + getHeading() + "," + getStatus() + "," + getDescription() + ","+epicId;
+        return getId() + "," + Type.SUB + "," + getHeading() + "," + getStatus() + "," + getDescription() + "," + epicId;
     }
 
     // Переопределение метода fromString
