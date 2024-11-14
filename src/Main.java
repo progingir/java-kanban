@@ -85,18 +85,19 @@ public class Main {
                 case 3:
                     System.out.println("Введите идентификатор задачи, которую хотите посмотреть:");
                     id = scanner.nextInt();
-
-
-                    if (tasks.containsKey(id)) {
-                        System.out.println(manager.getTaskById(id).printTask());
-                    } else if (epicTasks.containsKey(id)) {
-                        System.out.println(manager.getEpicTaskById(id).printTask());
+                    Task task = manager.getTaskById(id);
+                    if (task != null) {
+                        System.out.println("Задача: " + task);
                     } else {
-                        for (List<Subtask> subtaskList : subTasks.values()) {
-                            for (Subtask subtask : subtaskList) {
-                                if (subtask.getId() == id) {
-                                    System.out.println(manager.getSubTaskById(id).printTask());
-                                }
+                        EpicTask epic = manager.getEpicTaskById(id);
+                        if (epic != null) {
+                            System.out.println("Эпик: " + epic);
+                        } else {
+                            Subtask subtask = manager.getSubTaskById(id);
+                            if (subtask != null) {
+                                System.out.println("Подзадача: " + subtask);
+                            } else {
+                                System.out.println("Задача с ID " + id + " не найдена.");
                             }
                         }
                     }
@@ -145,16 +146,18 @@ public class Main {
                     heading = scanner.nextLine();
                     System.out.println("Введите описание задачи:");
                     description = scanner.nextLine();
-                    index = manager.getTaskIndex(heading, description, "epic task");
 
-                    if (index != -1) {
-                        System.out.println("Такая глобальная задача уже есть! Ее идентификатор - " + epicTasks.get(index).getId());
+                    int epicIndex = manager.getTaskIndex(heading, description, "epic task");
+
+                    if (epicIndex != -1) {
+                        System.out.println("Такой глобальной задачи уже есть! Ее идентификатор - " + epicTasks.get(epicIndex).getId());
                     } else {
-                        EpicTask newTask = new EpicTask(heading, description, index);
-                        manager.createEpicTask(newTask).printTask();
-                        System.out.println("Глобальная задача успешно создана! Ее идентификатор: " + newTask.getId());
+                        EpicTask newEpicTask = new EpicTask(heading, description, epicIndex);
+                        manager.createEpicTask(newEpicTask);
+                        System.out.println("Глобальная задача успешно создана! Ее идентификатор: " + newEpicTask.getId());
                     }
                     break;
+
                 case 9:
                     System.out.println("Укажите идентификатор эпика:");
                     int epicId = scanner.nextInt();
@@ -169,10 +172,10 @@ public class Main {
                     description = scanner.nextLine();
 
                     Subtask newSubtask = new Subtask(heading, description, 0, epicId);
-                    epicTasks.get(epicId).addSubtask(newSubtask);
-                    Subtask createdSubtask = manager.createSubTask(newSubtask);
+                    Subtask createdSubtask = manager.createSubTask(newSubtask); // Создаем подзадачу через менеджер
                     System.out.println("Подзадача успешно создана! Ее идентификатор - " + createdSubtask.getId());
                     break;
+
                 case 10:
                     System.out.println("Введите идентификатор задачи");
                     id = scanner.nextInt();

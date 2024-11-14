@@ -41,7 +41,6 @@ public class FileBackedTaskManagerTest {
     public void testSaveAndLoad() {
         Task task = new Task("Test Task", "Description", 1);
         manager.createTask(task);
-        manager.save();
 
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(new File(FILE_PATH));
         Task loadedTask = loadedManager.getTaskById(1);

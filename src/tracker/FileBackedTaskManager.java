@@ -17,32 +17,44 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.filePath = filePath;
     }
 
-
     public void load() {
         try {
             List<String> lines = Files.readAllLines(Path.of(filePath));
-            for (String line : lines.subList(0, lines.size())) { // пропускаем заголовок
+            for (String line : lines.subList(1, lines.size())) {
                 String[] parts = line.split(",");
                 switch (parts[1]) {
                     case "TASK":
                         Task task = Task.fromString(line);
-                        super.createTask(task);
+                        if (!tasks.containsKey(task.getId())) {
+                            tasks.put(task.getId(), task);
+                        }
                         break;
                     case "EPIC":
                         EpicTask epic = EpicTask.fromString(line);
-                        super.createEpicTask(epic);
+                        if (!epicTasks.containsKey(epic.getId())) {
+                            epicTasks.put(epic.getId(), epic);
+                        }
                         break;
-                    case "SUBTASK":
+                    case "SUB":
                         Subtask subtask = Subtask.fromString(line);
-                        super.createSubTask(subtask);
+                        if (!subTasks.containsKey(subtask.epicId)) {
+                            subTasks.put(subtask.epicId, new ArrayList<>());
+                        }
+                        ArrayList<Subtask> epicSubtasks = subTasks.get(subtask.epicId);
+                        if (!epicSubtasks.contains(subtask)) {
+                            epicSubtasks.add(subtask);
+                        }
                         break;
+                    default:
+                        throw new IllegalArgumentException("Неизвестный тип задачи: " + parts[1]);
                 }
             }
-
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ManagerSaveException("Ошибка при загрузке данных из файла: " + filePath, e);
         }
     }
+
+
 
     // статический метод для загрузки данных из файла
     public static FileBackedTaskManager loadFromFile(File file) {
@@ -53,7 +65,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     // метод для сохранения состояния в файл
-    public void save() {
+    private void save() {
         StringBuilder csvData = new StringBuilder();
         csvData.append("id,type,name,status,description,epic\n");
 
@@ -79,7 +91,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             e.printStackTrace();
         }
     }
-
 
     @Override
     public Task createTask(Task task) {
@@ -134,4 +145,62 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         super.updateTask(id, comm, change);
         save();
     }
+
+    @Override
+    public Task getTaskById(int id) {
+        String taskData = getTaskByIdFromFile(id);
+        if (taskData.startsWith("Задача с ID")) {
+            System.out.println(taskData); // Выводим сообщение, если задача не найдена
+            return null;
+        }
+        Task task = Task.fromString(taskData);
+        historyManager.add(task);
+        return task;
+    }
+
+    @Override
+    public EpicTask getEpicTaskById(int id) {
+        String epicData = getTaskByIdFromFile(id);
+        if (epicData.startsWith("Задача с ID")) {
+            System.out.println(epicData); // Выводим сообщение, если эпик не найден
+            return null;
+        }
+        EpicTask epic = EpicTask.fromString(epicData);
+        historyManager.add(epic);
+        return epic;
+    }
+
+    @Override
+    public Subtask getSubTaskById(int id) {
+        String subtaskData = getTaskByIdFromFile(id);
+        if (subtaskData.startsWith("Задача с ID")) {
+            System.out.println(subtaskData); // Выводим сообщение, если подзадача не найдена
+            return null;
+        }
+        Subtask subtask = Subtask.fromString(subtaskData);
+        historyManager.add(subtask);
+        return subtask;
+    }
+
+    public String getTaskByIdFromFile(int id) {
+        try {
+            List<String> lines = Files.readAllLines(Path.of(filePath));
+            for (String line : lines.subList(1, lines.size())) { // пропускаем заголовок
+                String[] parts = line.split(",");
+                int taskId = Integer.parseInt(parts[0]);
+                if (taskId == id) {
+                    return line; // Возвращаем строку, представляющую задачу
+                }
+            }
+        } catch (IOException e) {
+            throw new ManagerSaveException("Ошибка при загрузке данных из файла: " + filePath, e);
+        } catch (NumberFormatException e) {
+            return "Ошибка формата ID задачи в строке: " + e.getMessage();
+        }
+
+        return "Задача с ID " + id + " не найдена.";
+    }
 }
+
+
+// сделать 1) метод удаления тоже из файла 2) по-другому добавлять эпик, чтобы сохранялись подзадачи 3) сделать сохранение в файле по айдишникам
