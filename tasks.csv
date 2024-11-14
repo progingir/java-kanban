@@ -1,2 +1,7 @@
 id,type,name,status,description,epic
-1,TASK,ап,NEW,ап,
+5,TASK,ке,IN_PROGRESS,ке,
+2,TASK,вторая обычная,NEW,вторая обычная,
+6,EPIC,ененен,NEW,ененен,
+3,EPIC,эпик,NEW,эпик,
+4,SUB,подзадача,NEW,подзадача,3
+7,SUB,кукк,NEW,укук,3

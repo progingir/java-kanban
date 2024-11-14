@@ -30,7 +30,7 @@ public class EpicTask extends Task {
 
     public static EpicTask fromString(String value) {
         String[] parts = value.split(",");
-        if (parts.length < 5) { // Учитываем, что у EpicTask 5 частей
+        if (parts.length < 5) {
             throw new IllegalArgumentException("Неверный формат строки: " + value);
         }
 
@@ -40,10 +40,7 @@ public class EpicTask extends Task {
         String description = parts[4];
 
         EpicTask epicTask = new EpicTask(heading, description, id);
-        epicTask.setStatus(status); // Устанавливаем статус
-
-        // Здесь можно добавить логику для извлечения подзадач, если они есть
-        // Например, если подзадачи хранятся в отдельной строке или формате
+        epicTask.setStatus(status);
 
         return epicTask;
     }

@@ -217,4 +217,23 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         return "Задача с ID " + id + " не найдена.";
     }
+
+    public String getTaskTypeById(int id) {
+        try {
+            List<String> lines = Files.readAllLines(Path.of(filePath));
+            for (String line : lines.subList(1, lines.size())) {
+                String[] parts = line.split(",");
+                int taskId = Integer.parseInt(parts[0]);
+                if (taskId == id) {
+                    return parts[1]; // Предполагается, что тип задачи находится во втором элементе
+                }
+            }
+        } catch (IOException e) {
+            throw new ManagerSaveException("Ошибка при загрузке данных из файла: " + filePath, e);
+        } catch (NumberFormatException e) {
+            return "Ошибка формата ID задачи в строке: " + e.getMessage();
+        }
+
+        return null; // Задача не найдена
+    }
 }

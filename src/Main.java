@@ -85,21 +85,28 @@ public class Main {
                 case 3:
                     System.out.println("Введите идентификатор задачи, которую хотите посмотреть:");
                     id = scanner.nextInt();
-                    Task task = manager.getTaskById(id);
-                    if (task != null) {
-                        System.out.println("Задача: " + task);
-                    } else {
-                        EpicTask epic = manager.getEpicTaskById(id);
-                        if (epic != null) {
-                            System.out.println("Эпик: " + epic);
-                        } else {
-                            Subtask subtask = manager.getSubTaskById(id);
-                            if (subtask != null) {
+
+                    String taskType = manager.getTaskTypeById(id);
+                    if (taskType != null) {
+                        switch (taskType) {
+                            case "TASK":
+                                Task task = manager.getTaskById(id);
+                                System.out.println("Задача: " + task);
+                                break;
+                            case "EPIC":
+                                EpicTask epic = manager.getEpicTaskById(id);
+                                System.out.println("Эпик: " + epic);
+                                break;
+                            case "SUB":
+                                Subtask subtask = manager.getSubTaskById(id);
                                 System.out.println("Подзадача: " + subtask);
-                            } else {
-                                System.out.println("Задача с ID " + id + " не найдена.");
-                            }
+                                break;
+                            default:
+                                System.out.println("Неизвестный тип задачи.");
+                                break;
                         }
+                    } else {
+                        System.out.println("Задача с ID " + id + " не найдена.");
                     }
                     break;
                 case 4:

@@ -77,7 +77,7 @@ public class FileBackedTaskManagerTest {
         String data = "id,type,name,status,description,epic\n" +
                 "1,TASK,Test Task,NEW,Description,0\n" +
                 "2,EPIC,Test Epic,NEW,Description,0\n" +
-                "3,SUBTASK,Test Subtask,NEW,Description,2\n";
+                "3,SUB,Test Subtask,NEW,Description,2\n";
         Files.write(Paths.get(FILE_PATH), data.getBytes());
 
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(new File(FILE_PATH));
