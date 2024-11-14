@@ -10,11 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private final String filePath; // путь к файлу для автосохранения
+    private final String filePath;
+    private int lastId;
 
     public FileBackedTaskManager(HashMap<Integer, Task> tasks, HashMap<Integer, EpicTask> epicTasks, HashMap<Integer, ArrayList<Subtask>> subTasks, String filePath) {
         super(tasks, epicTasks, subTasks);
         this.filePath = filePath;
+        this.lastId = 0;
     }
 
     public void load() {
@@ -27,12 +29,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         Task task = Task.fromString(line);
                         if (!tasks.containsKey(task.getId())) {
                             tasks.put(task.getId(), task);
+                            lastId = Math.max(lastId, task.getId());
                         }
                         break;
                     case "EPIC":
                         EpicTask epic = EpicTask.fromString(line);
                         if (!epicTasks.containsKey(epic.getId())) {
                             epicTasks.put(epic.getId(), epic);
+                            lastId = Math.max(lastId, epic.getId());
                         }
                         break;
                     case "SUB":
@@ -43,6 +47,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         ArrayList<Subtask> epicSubtasks = subTasks.get(subtask.epicId);
                         if (!epicSubtasks.contains(subtask)) {
                             epicSubtasks.add(subtask);
+                            lastId = Math.max(lastId, subtask.getId());
                         }
                         break;
                     default:
@@ -54,37 +59,28 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-
-
-    // статический метод для загрузки данных из файла
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager manager = new FileBackedTaskManager(new HashMap<>(), new HashMap<>(), new HashMap<>(), file.getPath());
-        // загружаем данные из файла
         manager.load();
         return manager;
     }
 
-    // метод для сохранения состояния в файл
     private void save() {
         StringBuilder csvData = new StringBuilder();
         csvData.append("id,type,name,status,description,epic\n");
 
-        // сохранение задач
         for (Task task : super.getAllTasks()) {
             csvData.append(task.toString()).append("\n");
         }
 
-        // сохранение эпиков
         for (EpicTask epic : super.getAllEpicTasks()) {
             csvData.append(epic.toString()).append("\n");
         }
 
-        // сохранение подзадач
         for (Subtask subtask : super.getAllSubTasks()) {
             csvData.append(subtask.toString()).append("\n");
         }
 
-        // запись в файл
         try (FileWriter writer = new FileWriter(filePath)) {
             writer.write(csvData.toString());
         } catch (IOException e) {
@@ -94,21 +90,39 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public Task createTask(Task task) {
+        if (lastId == 0) {
+            lastId = 1;
+        } else {
+            lastId++;
+        }
         Task createdTask = super.createTask(task);
+        createdTask.setId(lastId);
         save();
         return createdTask;
     }
 
     @Override
     public EpicTask createEpicTask(EpicTask epicTask) {
+        if (lastId == 0) {
+            lastId = 1;
+        } else {
+            lastId++;
+        }
         EpicTask createdEpic = super.createEpicTask(epicTask);
+        createdEpic.setId(lastId);
         save();
         return createdEpic;
     }
 
     @Override
     public Subtask createSubTask(Subtask subtask) {
+        if (lastId == 0) {
+            lastId = 1;
+        } else {
+            lastId++;
+        }
         Subtask createdSubtask = super.createSubTask(subtask);
+        createdSubtask.setId(lastId);
         save();
         return createdSubtask;
     }
@@ -125,18 +139,21 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public void removeAllTasks() {
         super.removeAllTasks();
+        lastId = 0;
         save();
     }
 
     @Override
     public void removeAllEpicTasks() {
         super.removeAllEpicTasks();
+        lastId = 0;
         save();
     }
 
     @Override
     public void removeAllSubTasks() {
         super.removeAllSubTasks();
+        lastId = 0;
         save();
     }
 
@@ -150,7 +167,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public Task getTaskById(int id) {
         String taskData = getTaskByIdFromFile(id);
         if (taskData.startsWith("Задача с ID")) {
-            System.out.println(taskData); // Выводим сообщение, если задача не найдена
+            System.out.println(taskData);
             return null;
         }
         Task task = Task.fromString(taskData);
@@ -162,7 +179,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public EpicTask getEpicTaskById(int id) {
         String epicData = getTaskByIdFromFile(id);
         if (epicData.startsWith("Задача с ID")) {
-            System.out.println(epicData); // Выводим сообщение, если эпик не найден
+            System.out.println(epicData);
             return null;
         }
         EpicTask epic = EpicTask.fromString(epicData);
@@ -174,7 +191,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public Subtask getSubTaskById(int id) {
         String subtaskData = getTaskByIdFromFile(id);
         if (subtaskData.startsWith("Задача с ID")) {
-            System.out.println(subtaskData); // Выводим сообщение, если подзадача не найдена
+            System.out.println(subtaskData);
             return null;
         }
         Subtask subtask = Subtask.fromString(subtaskData);
@@ -185,11 +202,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public String getTaskByIdFromFile(int id) {
         try {
             List<String> lines = Files.readAllLines(Path.of(filePath));
-            for (String line : lines.subList(1, lines.size())) { // пропускаем заголовок
+            for (String line : lines.subList(1, lines.size())) {
                 String[] parts = line.split(",");
                 int taskId = Integer.parseInt(parts[0]);
                 if (taskId == id) {
-                    return line; // Возвращаем строку, представляющую задачу
+                    return line;
                 }
             }
         } catch (IOException e) {
@@ -201,6 +218,3 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return "Задача с ID " + id + " не найдена.";
     }
 }
-
-
-// сделать 1) метод удаления тоже из файла 2) по-другому добавлять эпик, чтобы сохранялись подзадачи 3) сделать сохранение в файле по айдишникам
