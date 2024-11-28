@@ -3,14 +3,15 @@ package tracker;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final HashMap<Integer, Task> tasks;
-    private final HashMap<Integer, EpicTask> epicTasks;
-    private final HashMap<Integer, ArrayList<Subtask>> subTasks;
-    private final Map<String, Integer> taskIndexMap = new HashMap<>();
+    protected final HashMap<Integer, Task> tasks;
+    protected final HashMap<Integer, EpicTask> epicTasks;
+    protected final HashMap<Integer, ArrayList<Subtask>> subTasks;
+    protected final Map<String, Integer> taskIndexMap = new HashMap<>();
     HistoryManager historyManager = Managers.getDefaultHistory();
 
     int id = 0;
     String type = "";
+
 
     public InMemoryTaskManager(HashMap<Integer, Task> tasks, HashMap<Integer, EpicTask> epicTasks, HashMap<Integer, ArrayList<Subtask>> subTasks) {
         this.tasks = tasks;
@@ -118,30 +119,24 @@ public class InMemoryTaskManager implements TaskManager {
         return epicTask;
     }
 
+
     @Override
     public Subtask createSubTask(Subtask subtask) {
         type = "subtask";
-        int index = getTaskIndex(subtask.heading, subtask.description, type);
-        if (index != -1) {
-            for (Subtask existingSubtask : subTasks.getOrDefault(subtask.getEpicTask(epicTasks).id, new ArrayList<>())) {
-                if (existingSubtask.getId() == index) {
-                    return existingSubtask;
-                }
+        subtask.setId(++id);
+        int epicId = subtask.epicId; // Получаем ID эпической задачи
+        if (epicTasks.containsKey(epicId)) {
+            if (!subTasks.containsKey(epicId)) {
+                subTasks.put(epicId, new ArrayList<>()); // Создаем список подзадач, если его нет
             }
-        } else {
-            subtask.setId(++id);
-            if (subTasks.containsKey(subtask.getEpicTask(epicTasks).id)) {
-                subTasks.get(subtask.getEpicTask(epicTasks).id).add(subtask);
-            } else {
-                ArrayList<Subtask> subtaskArray = new ArrayList<>();
-                subtaskArray.add(subtask);
-                subTasks.put(subtask.getEpicTask(epicTasks).id, subtaskArray);
-            }
+            subTasks.get(epicId).add(subtask); // Добавляем подзадачу в список подзадач эпика
+            epicTasks.get(epicId).addSubtask(subtask); // Добавляем подзадачу в эпическую задачу
             taskIndexMap.put(subtask.heading + " " + subtask.description + " " + type, id);
             return subtask;
         }
-        return null;
+        return null; // Не добавляем, если эпика нет
     }
+
 
     @Override
     public void updateTask(int id, int comm, String change) {

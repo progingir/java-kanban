@@ -20,4 +20,8 @@ public class Managers {
         }
         return historyManager;
     }
+
+    public static TaskManager getFileManager(String fileName) {
+        return new FileBackedTaskManager(new HashMap<>(), new HashMap<>(), new HashMap<>(), fileName);
+    }
 }

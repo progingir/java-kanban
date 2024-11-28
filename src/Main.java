@@ -1,8 +1,8 @@
 import tracker.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -16,7 +16,17 @@ public class Main {
         HashMap<Integer, EpicTask> epicTasks = new HashMap<>();
         HashMap<Integer, ArrayList<Subtask>> subTasks = new HashMap<>();
 
-        InMemoryTaskManager manager = new InMemoryTaskManager(tasks, epicTasks, subTasks);
+
+        String fileName = "tasks.csv";
+        File file = new File(fileName);
+
+        FileBackedTaskManager manager;
+        if (file.exists()) {
+            manager = FileBackedTaskManager.loadFromFile(file);
+        } else {
+            manager = new FileBackedTaskManager(tasks, epicTasks, subTasks, fileName);
+        }
+
 
         while (true) {
             printMenu();
@@ -75,18 +85,27 @@ public class Main {
                     System.out.println("Введите идентификатор задачи, которую хотите посмотреть:");
                     id = scanner.nextInt();
 
-                    if (tasks.containsKey(id)) {
-                        System.out.println(manager.getTaskById(id).printTask());
-                    } else if (epicTasks.containsKey(id)) {
-                        System.out.println(manager.getEpicTaskById(id).printTask());
-                    } else {
-                        for (List<Subtask> subtaskList : subTasks.values()) {
-                            for (Subtask subtask : subtaskList) {
-                                if (subtask.getId() == id) {
-                                    System.out.println(manager.getSubTaskById(id).printTask());
-                                }
-                            }
+                    String taskType = manager.getTaskTypeById(id);
+                    if (taskType != null) {
+                        switch (taskType) {
+                            case "TASK":
+                                Task task = manager.getTaskById(id);
+                                System.out.println("Задача: " + task);
+                                break;
+                            case "EPIC":
+                                EpicTask epic = manager.getEpicTaskById(id);
+                                System.out.println("Эпик: " + epic);
+                                break;
+                            case "SUB":
+                                Subtask subtask = manager.getSubTaskById(id);
+                                System.out.println("Подзадача: " + subtask);
+                                break;
+                            default:
+                                System.out.println("Неизвестный тип задачи.");
+                                break;
                         }
+                    } else {
+                        System.out.println("Задача с ID " + id + " не найдена.");
                     }
                     break;
                 case 4:
@@ -133,16 +152,18 @@ public class Main {
                     heading = scanner.nextLine();
                     System.out.println("Введите описание задачи:");
                     description = scanner.nextLine();
-                    index = manager.getTaskIndex(heading, description, "epic task");
 
-                    if (index != -1) {
-                        System.out.println("Такая глобальная задача уже есть! Ее идентификатор - " + epicTasks.get(index).getId());
+                    int epicIndex = manager.getTaskIndex(heading, description, "epic task");
+
+                    if (epicIndex != -1) {
+                        System.out.println("Такой глобальной задачи уже есть! Ее идентификатор - " + epicTasks.get(epicIndex).getId());
                     } else {
-                        EpicTask newTask = new EpicTask(heading, description, index);
-                        manager.createEpicTask(newTask).printTask();
-                        System.out.println("Глобальная задача успешно создана! Ее идентификатор: " + newTask.getId());
+                        EpicTask newEpicTask = new EpicTask(heading, description, epicIndex);
+                        manager.createEpicTask(newEpicTask);
+                        System.out.println("Глобальная задача успешно создана! Ее идентификатор: " + newEpicTask.getId());
                     }
                     break;
+
                 case 9:
                     System.out.println("Укажите идентификатор эпика:");
                     int epicId = scanner.nextInt();
@@ -157,10 +178,10 @@ public class Main {
                     description = scanner.nextLine();
 
                     Subtask newSubtask = new Subtask(heading, description, 0, epicId);
-                    epicTasks.get(epicId).addSubtask(newSubtask);
                     Subtask createdSubtask = manager.createSubTask(newSubtask);
                     System.out.println("Подзадача успешно создана! Ее идентификатор - " + createdSubtask.getId());
                     break;
+
                 case 10:
                     System.out.println("Введите идентификатор задачи");
                     id = scanner.nextInt();
@@ -178,9 +199,6 @@ public class Main {
                     System.out.println(Managers.getDefaultHistory().getHistory());
                     break;
                 case 12:
-                    runOptionalScen(manager);
-                    return;
-                case 13:
                     return;
             }
         }
@@ -199,48 +217,6 @@ public class Main {
         System.out.println("9 - Добавить подзадачи в эпик");
         System.out.println("10 - Отметить сделанную задачу");
         System.out.println("11 - Показать историю просмотров");
-        System.out.println("12 - Запустить опциональный сценарий");
-        System.out.println("13 - Выход");
-    }
-
-    private static void runOptionalScen(InMemoryTaskManager manager) {
-        Task task1 = new Task("Task 1", "Description for Task 1", 1);
-        Task task2 = new Task("Task 2", "Description for Task 2", 2);
-        manager.createTask(task1);
-        manager.createTask(task2);
-
-        EpicTask epicWithoutSubtasks = new EpicTask("Epic without Subtasks", "Description for Epic without Subtasks", 3);
-        manager.createEpicTask(epicWithoutSubtasks);
-
-        EpicTask epicWithSubtasks = new EpicTask("Epic with Subtasks", "Description for Epic with Subtasks", 4);
-        manager.createEpicTask(epicWithSubtasks);
-
-        Subtask subtask1 = new Subtask("Subtask 1", "Description for Subtask 1", 5, epicWithSubtasks.getId());
-        Subtask subtask2 = new Subtask("Subtask 2", "Description for Subtask 2", 6, epicWithSubtasks.getId());
-        Subtask subtask3 = new Subtask("Subtask 3", "Description for Subtask 3", 7, epicWithSubtasks.getId());
-
-        manager.createSubTask(subtask1);
-        manager.createSubTask(subtask2);
-        manager.createSubTask(subtask3);
-        epicWithSubtasks.addSubtask(subtask1);
-        epicWithSubtasks.addSubtask(subtask2);
-        epicWithSubtasks.addSubtask(subtask3);
-
-        System.out.println(manager.getTaskById(task1.getId()).printTask());
-        System.out.println(manager.getTaskById(task2.getId()).printTask());
-        System.out.println(manager.getEpicTaskById(epicWithoutSubtasks.getId()).printTask());
-        System.out.println(manager.getEpicTaskById(epicWithSubtasks.getId()).printTask());
-        System.out.println(manager.getEpicTaskById(epicWithoutSubtasks.getId()).printTask());
-        System.out.println(manager.getTaskById(task2.getId()).printTask());
-
-        System.out.println("История просмотров: " + Managers.getDefaultHistory().getHistory());
-
-        manager.removeTaskById(task2.getId());
-        System.out.println("Удалили задачу Task 2");
-        System.out.println("История просмотров после удаления Task 2: " + Managers.getDefaultHistory().getHistory());
-
-        manager.removeTaskById(epicWithSubtasks.getId());
-        System.out.println("Удалили эпик с подзадачами.");
-        System.out.println("История просмотров после удаления эпика с подзадачами: " + Managers.getDefaultHistory().getHistory());
+        System.out.println("12 - Выход");
     }
 }

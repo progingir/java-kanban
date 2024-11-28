@@ -48,4 +48,25 @@ public class Task {
     public void setStatus(Status status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return getId() + "," + Type.TASK + "," + getHeading() + "," + getStatus() + "," + getDescription() + ",";
+    }
+
+    public static Task fromString(String value) {
+        String[] parts = value.split(",");
+        if (parts.length < 5) {
+            throw new IllegalArgumentException("Неверный формат строки: " + value);
+        }
+
+        int id = Integer.parseInt(parts[0]);
+        String heading = parts[2];
+        Status status = Status.valueOf(parts[3]);
+        String description = parts[4];
+
+        Task task = new Task(heading, description, id);
+        task.setStatus(status);
+        return task;
+    }
 }
