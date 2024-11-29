@@ -17,7 +17,6 @@ class InMemoryHistoryManagerTest {
     HashMap<Integer, ArrayList<Subtask>> subTasks = new HashMap<>();
     InMemoryTaskManager manager = new InMemoryTaskManager(tasks, epicTasks, subTasks);
 
-
     @Test
     void historyShouldContainOnlyLastAddedTask() {
         String heading1 = "task1";
