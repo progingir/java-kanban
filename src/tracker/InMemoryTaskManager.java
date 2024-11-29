@@ -120,6 +120,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
 
+
     @Override
     public Subtask createSubTask(Subtask subtask) {
         type = "subtask";
@@ -267,4 +268,35 @@ public class InMemoryTaskManager implements TaskManager {
     public ArrayList<Task> getHistory() {
         return historyManager.getHistory();
     }
+
+    public TreeSet<Task> getPrioritizedTasks() {
+        TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator
+                .comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(Task::getId)); // Добавляем сравнение по ID
+
+        // Добавляем все обычные задачи
+        for (Task task : tasks.values()) {
+            if (task.getStartTime() != null) {
+                prioritizedTasks.add(task);
+            }
+        }
+
+        // Добавляем все эпики
+        for (EpicTask epic : epicTasks.values()) {
+            if (epic.getStartTime() != null) {
+                prioritizedTasks.add(epic);
+
+                for (Subtask subtask : epic.getSubtasks()) {
+                    if (subtask.getStartTime() != null) {
+                        prioritizedTasks.add(subtask);
+                    } else {
+                        System.out.println("Подзадача с ID " + subtask.getId() + " имеет null startTime и не будет добавлена.");
+                    }
+                }
+            }
+        }
+
+        return prioritizedTasks;
+    }
+
 }
