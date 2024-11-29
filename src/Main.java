@@ -81,7 +81,7 @@ public class Main {
                                 String newDescription = scanner.nextLine();
                                 manager.updateTask(id, comm, newDescription);
                                 System.out.println("Новое описание сохранено!");
-                            }  else if (comm == 0) {
+                            } else if (comm == 0) {
                                 break;
                             } else {
                                 System.out.println("Такой команды нет!");
