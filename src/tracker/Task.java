@@ -108,4 +108,15 @@ public class Task {
         task.setStatus(status);
         return task;
     }
+
+    public boolean isOverlapping(Task other) {
+        if (this.startTime == null || other.startTime == null) {
+            return false;
+        }
+
+        LocalDateTime thisEndTime = this.getEndTime();
+        LocalDateTime otherEndTime = other.getEndTime();
+
+        return this.startTime.isBefore(otherEndTime) && thisEndTime.isAfter(other.startTime);
+    }
 }

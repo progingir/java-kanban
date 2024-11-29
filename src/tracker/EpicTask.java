@@ -63,7 +63,9 @@ public class EpicTask extends Task {
 
     public static EpicTask fromString(String value) {
         String[] parts = value.split(",");
-        if (parts.length < 7) { // Минимальное количество частей для корректного разбора
+
+        // Проверка на минимальное количество частей
+        if (parts.length < 6) {
             throw new IllegalArgumentException("Неверный формат строки: " + value);
         }
 
@@ -72,12 +74,17 @@ public class EpicTask extends Task {
         Status status = Status.valueOf(parts[3]);
         String description = parts[4];
         Duration duration = Duration.ofMinutes(Long.parseLong(parts[5]));
-        LocalDateTime startTime = parts[6].isEmpty() ? null : LocalDateTime.parse(parts[6]);
+        LocalDateTime startTime = parts.length > 6 && !parts[6].isEmpty() ? LocalDateTime.parse(parts[6]) : null;
 
         EpicTask epicTask = new EpicTask(heading, description, id);
         epicTask.setStatus(status);
         epicTask.setDuration(duration);
         epicTask.setStartTime(startTime);
+
+        // Инициализация пустого списка подзадач, если у эпика нет подзадач
+        if (duration.isZero() && startTime == null) {
+            epicTask.subtasks = new ArrayList<>(); // Инициализируем пустой список подзадач
+        }
 
         return epicTask;
     }
