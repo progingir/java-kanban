@@ -3,6 +3,7 @@ package tracker;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
 public class InMemoryHistoryManager implements HistoryManager {
     private final HashMap<Integer, Node> tasksById;
     private Node head;
@@ -32,6 +33,12 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
+    public void clear() {
+        tasksById.clear();
+        head = null;
+        tail = null;
+    }
+
     private void linkLast(Node node) {
         if (head == null) {
             head = node;
@@ -41,12 +48,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             node.prev = tail;
             tail = node;
         }
-    }
-
-    public void clear() {
-        tasksById.clear();
-        head = null;
-        tail = null;
     }
 
     private void removeNode(Node node) {

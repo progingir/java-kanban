@@ -25,7 +25,7 @@ class EpicTaskTest {
     InMemoryTaskManager manager = new InMemoryTaskManager(tasks, epicTasks, subTasks);
 
     @Test
-    public void shouldGiveListOfSubtasks() {
+    public void getSubtasksTaskShouldReturnListOfSubtasks() {
         EpicTask epicTask = new EpicTask(epicHeading, epicDescription, 0);
         manager.createEpicTask(epicTask);
 
@@ -40,7 +40,7 @@ class EpicTaskTest {
     }
 
     @Test
-    public void testEpicStatusAllNew() {
+    public void getStatusShouldReturnEpicStatusAllNew() {
         EpicTask epic = new EpicTask("Epic Task", "Epic Description", 1);
         manager.createEpicTask(epic);
         Subtask subtask1 = new Subtask("Subtask 1", "Description", 2, epic.getId(), Duration.ofMinutes(30), LocalDateTime.now());
@@ -52,42 +52,52 @@ class EpicTaskTest {
     }
 
     @Test
-    public void testEpicStatusAllDone() {
+    public void checkStatusShouldReturnEpicStatusAllDone() {
+        EpicTask epic = new EpicTask("Epic Task", "Epic Description", 1);
+        manager.createEpicTask(epic);
+
+        Subtask subtask1 = new Subtask("Subtask 1", "Description", 2, epic.getId(), Duration.ofMinutes(30), LocalDateTime.now());
+        Subtask subtask2 = new Subtask("Subtask 2", "Description", 3, epic.getId(), Duration.ofMinutes(45), LocalDateTime.now().plusDays(1));
+
+        manager.createSubTask(subtask1);
+        manager.createSubTask(subtask2);
+
+        subtask1.setStatus(Status.DONE);
+        subtask2.setStatus(Status.DONE);
+
+        manager.checkStatus(epic.getId(), 1);
+
+        assertEquals(Status.DONE, epic.getStatus(), "Статус эпической задачи должен быть DONE.");
+    }
+
+
+    @Test
+    public void checkStatusShouldReturnEpicStatusMixed() {
         EpicTask epic = new EpicTask("Epic Task", "Epic Description", 1);
         manager.createEpicTask(epic);
         Subtask subtask1 = new Subtask("Subtask 1", "Description", 2, epic.getId(), Duration.ofMinutes(30), LocalDateTime.now());
         Subtask subtask2 = new Subtask("Subtask 2", "Description", 3, epic.getId(), Duration.ofMinutes(45), LocalDateTime.now().plusDays(1));
         subtask1.setStatus(DONE);
-        subtask2.setStatus(DONE);
+        subtask2.setStatus(NEW);
         manager.createSubTask(subtask1);
         manager.createSubTask(subtask2);
 
-        assertEquals(NEW, epic.getStatus());
+        manager.checkStatus(epic.getId(), 1);
+
+        assertEquals(IN_PROGRESS, epic.getStatus());
     }
 
     @Test
-    public void testEpicStatusMixed() {
+    public void checkStatusShouldReturnEpicStatusInProgress() {
         EpicTask epic = new EpicTask("Epic Task", "Epic Description", 1);
         manager.createEpicTask(epic);
-        Subtask subtask1 = new Subtask("Subtask 1", "Description", 2, epic.getId(), Duration.ofMinutes(30), LocalDateTime.now());
-        Subtask subtask2 = new Subtask("Subtask 2", "Description", 3, epic.getId(), Duration.ofMinutes(45), LocalDateTime.now().plusDays(1));
-        subtask1.setStatus(DONE);
-        subtask1.setStatus(NEW);
-        subtask2.setStatus(DONE);
-        manager.createSubTask(subtask1);
-        manager.createSubTask(subtask2);
-
-        assertEquals(NEW, epic.getStatus());
-    }
-
-    @Test
-    public void testEpicStatusInProgress() {
-        EpicTask epic = new EpicTask("Epic Task", "Epic Description", 1);
-        manager.createEpicTask(epic);
-        Subtask subtask1 = new Subtask("Subtask 1", "Description", 2, epic.getId(), Duration.ofMinutes(30), LocalDateTime.now());
+        Subtask subtask1 = new Subtask("Subtask 1", "Description", 2, epic.getId(),
+                Duration.ofMinutes(30), LocalDateTime.now());
         subtask1.setStatus(IN_PROGRESS);
         manager.createSubTask(subtask1);
 
-        assertEquals(NEW, epic.getStatus());
+        manager.checkStatus(epic.getId(), 1);
+
+        assertEquals(IN_PROGRESS, epic.getStatus());
     }
 }

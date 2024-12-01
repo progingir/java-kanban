@@ -16,8 +16,6 @@ class SubtaskTest {
     String epicHeading = "second epic";
     String epicDescription = "second description";
 
-    int id;
-
     String subHeading_ = "third subtask";
     String subDescription_ = "third subtask description";
 
@@ -27,9 +25,9 @@ class SubtaskTest {
     InMemoryTaskManager manager = new InMemoryTaskManager(tasks, epicTasks, subTasks);
 
     @Test
-    public void shouldGiveEpic() {
-        id = manager.getTaskIndex(epicHeading, epicDescription, "epic task");
-        EpicTask epic = new EpicTask(epicHeading, epicDescription, id);
+    public void getEpicTaskShouldReturnEpicAssociatedWithSubtask() {
+        int epicId = manager.getTaskIndex(epicHeading, epicDescription, "epic task");
+        EpicTask epic = new EpicTask(epicHeading, epicDescription, epicId);
         epicTasks.put(epic.getId(), epic);
 
         String subHeading = "second subtask";
@@ -41,18 +39,18 @@ class SubtaskTest {
         subtaskList.add(subtask);
         subTasks.put(epic.getId(), subtaskList);
 
-        Assertions.assertEquals(epic, subtask.getEpicTask(epicTasks));
+        Assertions.assertEquals(epic, subtask.getEpicTask(epicTasks), "Метод должен вернуть связанный эпик для сабтаска.");
     }
 
     @Test
-    public void shouldGiveNullIfEpicIsNotInTheMap() {
-        id = manager.getTaskIndex(epicHeading, epicDescription, "epic task");
-        EpicTask epic = new EpicTask(epicHeading, epicDescription, id);
+    public void getEpicTaskShouldReturnNullIfEpicIsNotInTheMap() {
+        int epicId = manager.getTaskIndex(epicHeading, epicDescription, "epic task");
+        EpicTask epic = new EpicTask(epicHeading, epicDescription, epicId);
         epicTasks.put(epic.getId(), epic);
 
-        id = manager.getTaskIndex(subHeading_, subDescription_, "subtask");
-        Subtask subtaskSecond = new Subtask(subHeading_, subDescription_, id, 78, Duration.ofMinutes(30), LocalDateTime.now());
+        int subtaskId = manager.getTaskIndex(subHeading_, subDescription_, "subtask");
+        Subtask subtaskSecond = new Subtask(subHeading_, subDescription_, subtaskId, 78, Duration.ofMinutes(30), LocalDateTime.now());
 
-        Assertions.assertNull(subtaskSecond.getEpicTask(epicTasks));
+        Assertions.assertNull(subtaskSecond.getEpicTask(epicTasks), "Метод должен вернуть null, если эпик не найден.");
     }
 }
