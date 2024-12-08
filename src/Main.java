@@ -1,9 +1,12 @@
 import tracker.*;
 
 import java.io.File;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.TreeSet;
 
 public class Main {
     public static void main(String[] args) {
@@ -27,7 +30,6 @@ public class Main {
             manager = new FileBackedTaskManager(tasks, epicTasks, subTasks, fileName);
         }
 
-
         while (true) {
             printMenu();
             int command = scanner.nextInt();
@@ -39,16 +41,24 @@ public class Main {
                     heading = scanner.nextLine();
                     System.out.println("Введите описание задачи:");
                     description = scanner.nextLine();
+                    System.out.println("Введите продолжительность задачи (в минутах):");
+                    long durationMinutes = scanner.nextLong();
+                    Duration duration = Duration.ofMinutes(durationMinutes);
+                    System.out.println("Введите дату и время начала выполнения задачи (в формате YYYY-MM-DDTHH:MM):");
+                    String startTimeInput = scanner.next();
+                    LocalDateTime startTime = LocalDateTime.parse(startTimeInput);
+
                     int index = manager.getTaskIndex(heading, description, "task");
 
                     if (index != -1) {
                         System.out.println("Такая задача уже есть! Ее индекс: " + tasks.get(index).getId());
                     } else {
-                        Task newTask = new Task(heading, description, index);
+                        Task newTask = new Task(heading, description, index, duration, startTime);
                         manager.createTask(newTask);
                         System.out.println("Задача успешно создана! Ее индекс: " + newTask.getId());
                     }
                     break;
+
                 case 2:
                     System.out.println("Введите идентификатор задачи, которую хотите отредактировать: ");
                     id = scanner.nextInt();
@@ -81,6 +91,7 @@ public class Main {
                         System.out.println("Задачи с таким id пока что нет");
                     }
                     break;
+
                 case 3:
                     System.out.println("Введите идентификатор задачи, которую хотите посмотреть:");
                     id = scanner.nextInt();
@@ -147,11 +158,13 @@ public class Main {
                     id = scanner.nextInt();
                     System.out.println(manager.getSubtasks(id));
                     break;
+
                 case 8:
-                    System.out.println("Введите название задачи:");
+                    System.out.println("Введите название эпика:");
                     heading = scanner.nextLine();
-                    System.out.println("Введите описание задачи:");
+                    System.out.println("Введите описание эпика:");
                     description = scanner.nextLine();
+
 
                     int epicIndex = manager.getTaskIndex(heading, description, "epic task");
 
@@ -177,7 +190,14 @@ public class Main {
                     System.out.println("Введите описание подзадачи:");
                     description = scanner.nextLine();
 
-                    Subtask newSubtask = new Subtask(heading, description, 0, epicId);
+                    System.out.println("Введите продолжительность задачи (в минутах):");
+                    durationMinutes = scanner.nextLong();
+                    duration = Duration.ofMinutes(durationMinutes);
+                    System.out.println("Введите дату и время начала выполнения эпика (в формате YYYY-MM-DDTHH:MM):");
+                    startTimeInput = scanner.next();
+                    startTime = LocalDateTime.parse(startTimeInput);
+
+                    Subtask newSubtask = new Subtask(heading, description, 0, epicId, duration, startTime);
                     Subtask createdSubtask = manager.createSubTask(newSubtask);
                     System.out.println("Подзадача успешно создана! Ее идентификатор - " + createdSubtask.getId());
                     break;
@@ -198,7 +218,14 @@ public class Main {
                 case 11:
                     System.out.println(Managers.getDefaultHistory().getHistory());
                     break;
-                case 12:
+                case 12: // Например, добавим новый пункт в меню для получения приоритезированных задач
+                    System.out.println("== Приоритезированные задачи: ==");
+                    TreeSet<Task> prioritizedTasks = manager.getPrioritizedTasks();
+                    for (Task task : prioritizedTasks) {
+                        System.out.println(task);
+                    }
+                    break;
+                case 13:
                     return;
             }
         }
@@ -217,6 +244,7 @@ public class Main {
         System.out.println("9 - Добавить подзадачи в эпик");
         System.out.println("10 - Отметить сделанную задачу");
         System.out.println("11 - Показать историю просмотров");
-        System.out.println("12 - Выход");
+        System.out.println("12 - Вывести задачи приотизировано");
+        System.out.println("13 - Выход");
     }
 }
