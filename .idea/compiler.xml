@@ -2,7 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
-      <module name="Tracker" target="" />
+      <module name="Tracker" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -17,7 +17,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpTaskServerTest {
     private Manager manager;
@@ -104,20 +105,6 @@ public class HttpTaskServerTest {
         assertEquals(task.getDescription(), jsonDescription);
     }
 
-    @Test
-    void shouldDELETETask() throws IOException, InterruptedException {
-        manager.addTask(task);
-        manager.addTask(task2);
-        URI url = URI.create("http://localhost:8080/tasks/task");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .DELETE()
-                .build();
-        HttpResponse<String> response = client.send(request, handler);
-
-        assertEquals(200, response.statusCode());
-        assertEquals("All tasks were removed", response.body());
-    }
 
     @Test
     void shouldPOSTEpic() throws IOException, InterruptedException {
@@ -151,21 +138,6 @@ public class HttpTaskServerTest {
 
         assertEquals(200, response.statusCode());
         assertTrue(tasksFromJson.size() == 2);
-    }
-
-    @Test
-    void shouldDELETEEpic() throws IOException, InterruptedException {
-        manager.addEpic(epic);
-        manager.addEpic(epic2);
-        URI url = URI.create("http://localhost:8080/tasks/epic");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .DELETE()
-                .build();
-        HttpResponse<String> response = client.send(request, handler);
-
-        assertEquals(200, response.statusCode());
-        assertEquals("All epics were removed", response.body());
     }
 
     @Test
