@@ -1,23 +1,17 @@
 package tracker;
 
-import java.util.HashMap;
-
 public class Managers {
 
-    private static TaskManager taskManager;
-    private static InMemoryHistoryManager historyManager;
-
-    public static TaskManager getDefault() {
-        if (taskManager == null) {
-            taskManager = new InMemoryTaskManager(new HashMap<>(), new HashMap<>(), new HashMap<>());
-        }
-        return taskManager;
+    public static Manager getDefault() {
+        return new InMemoryTaskManager(getDefaultHistory());
     }
 
-    public static InMemoryHistoryManager getDefaultHistory() {
-        if (historyManager == null) {
-            historyManager = new InMemoryHistoryManager();
-        }
-        return historyManager;
+    public static HistoryManager getDefaultHistory() {
+        return new InMemoryHistoryManager();
     }
+
+    public static Manager getDefault(String url) {
+        return new HttpTaskManager(getDefaultHistory(), url, new KVTaskClient(url));
+    }
+
 }

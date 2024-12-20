@@ -2,7 +2,6 @@ package tracker;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 
 public class Subtask extends Task {
     int epicId;
@@ -12,8 +11,8 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 
-    public EpicTask getEpicTask(HashMap<Integer, EpicTask> epicTaskHashMap) {
-        return epicTaskHashMap.get(epicId);
+    public int getEpicID() {
+        return epicId;
     }
 
     @Override
