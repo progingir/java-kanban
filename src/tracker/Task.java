@@ -11,7 +11,6 @@ public class Task {
     protected Duration duration; // Продолжительность задачи
     protected LocalDateTime startTime; // Дата начала задачи
 
-    // Конструктор с параметрами
     public Task(String heading, String description, int id, Duration duration, LocalDateTime startTime) {
         this.heading = heading;
         this.description = description;
@@ -21,7 +20,6 @@ public class Task {
         this.startTime = startTime;
     }
 
-    // Геттеры и сеттеры
     public Duration getDuration() {
         return duration;
     }

@@ -3,36 +3,40 @@ package tracker;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class EpicTask extends Task {
-    private ArrayList<Subtask> subtasks;
+    private List<Integer> subtasksIds;
 
     public EpicTask(String heading, String description, int id) {
-        super(heading, description, id, Duration.ZERO, null); // Устанавливаем нулевую продолжительность и null для startTime
-        this.subtasks = new ArrayList<>();
+        super(heading, description, id, Duration.ZERO, null);
+        this.subtasksIds = new ArrayList<>();
     }
 
-    public void addSubtask(Subtask subtask) {
-        subtasks.add(subtask);
-        calculateEpicDetails();
+    public List<Integer> getSubtasksIds() {
+        return subtasksIds;
     }
 
-    public ArrayList<Subtask> getSubtasks() {
-        return subtasks;
+    public void setSubtasksIds(int subtaskId) {
+        subtasksIds.add(subtaskId);
     }
 
-    private void calculateEpicDetails() {
+    private void calculateEpicDetails(HashMap<Integer, Subtask> subtasks) {
         Duration totalDuration = Duration.ZERO;
         LocalDateTime earliestStartTime = null;
         LocalDateTime latestEndTime = null;
 
-        for (Subtask subtask : subtasks) {
-            totalDuration = totalDuration.plus(subtask.getDuration());
-            if (earliestStartTime == null || (subtask.getStartTime() != null && subtask.getStartTime().isBefore(earliestStartTime))) {
-                earliestStartTime = subtask.getStartTime();
-            }
-            if (latestEndTime == null || (subtask.getEndTime() != null && subtask.getEndTime().isAfter(latestEndTime))) {
-                latestEndTime = subtask.getEndTime();
+        for (Integer subtaskId : subtasksIds) {
+            Subtask subtask = subtasks.get(subtaskId); // Получаем подзадачу по идентификатору
+            if (subtask != null) { // Проверяем, что подзадача существует
+                totalDuration = totalDuration.plus(subtask.getDuration());
+                if (earliestStartTime == null || (subtask.getStartTime() != null && subtask.getStartTime().isBefore(earliestStartTime))) {
+                    earliestStartTime = subtask.getStartTime();
+                }
+                if (latestEndTime == null || (subtask.getEndTime() != null && subtask.getEndTime().isAfter(latestEndTime))) {
+                    latestEndTime = subtask.getEndTime();
+                }
             }
         }
 
@@ -83,7 +87,7 @@ public class EpicTask extends Task {
 
         // Инициализация пустого списка подзадач, если у эпика нет подзадач
         if (duration.isZero() && startTime == null) {
-            epicTask.subtasks = new ArrayList<>(); // Инициализируем пустой список подзадач
+            epicTask.subtasksIds = new ArrayList<>(); // Инициализируем пустой список подзадач
         }
 
         return epicTask;

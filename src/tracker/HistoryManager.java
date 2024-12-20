@@ -1,14 +1,12 @@
 package tracker;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface HistoryManager {
 
-    void add(Task task);
+    Task add(Task task);
 
-    ArrayList<Task> getHistory();
+    List<Task> getHistory();
 
     void remove(int id);
-
-    void clear();
 }
